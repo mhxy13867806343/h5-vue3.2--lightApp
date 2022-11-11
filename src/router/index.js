@@ -23,6 +23,11 @@ const routes = [
     ]
   },
   {
+    path: '/sendpublish',
+    name: 'sendPublish',
+    component : () => import(/* webpackChunkName: "about" */ '../views/sendPublish.vue')
+  },
+  {
     path: '/login',
     name: 'Login',
     component : () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
