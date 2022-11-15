@@ -3,7 +3,7 @@
 </script>
 <template>
   <div class="publish">
-    <van-icon name="add"  size="50" @click="$router.push('/sendpublish')"/>
+    <span class="iconfont icon-fabu" @click="$router.push('/sendpublish')"/>
   </div>
 </template>
 

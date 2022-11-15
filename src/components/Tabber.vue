@@ -1,9 +1,23 @@
 <script setup>
-import {ref,onMounted} from 'vue'
+import {ref,onMounted,reactive} from 'vue'
 const active=ref(0)
 import {useRouter,useRoute} from 'vue-router'
 const router = useRouter()
 const route = useRoute()
+const pathreactive=reactive({
+  list:[
+    {
+      active: 'icon-shouye-copy',
+      inactive: 'icon-shouye',
+      name:'首页'
+    },
+    {
+      active: 'icon-wode-copy',
+      inactive: 'icon-wode',
+      name:'我的'
+    }
+  ]
+})
 onMounted(()=>{
   //页面刷新
   const list =['/home','/my']
@@ -20,9 +34,14 @@ const onChange=(active)=>{
 </script>
 <template>
   <router-view />
-  <van-tabbar v-model="active" placeholder safe-area-inset-bottom @change="onChange">
-    <van-tabbar-item icon="wap-home-o">首页</van-tabbar-item>
-    <van-tabbar-item icon="contact">我的</van-tabbar-item>
+
+  <van-tabbar v-model="active" placeholder @change="onChange">
+    <van-tabbar-item v-for="(item,index) in pathreactive.list" :key="index">
+      <template #icon="props">
+        <p class="iconfont" :class="props.active ? item.active : item.inactive"></p>
+
+      </template>
+    </van-tabbar-item>
   </van-tabbar>
 </template>
 

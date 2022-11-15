@@ -41,6 +41,16 @@ const routes = [
     path: '/minformation',
     name: 'minformation',
     component : () => import(/* webpackChunkName: "about" */ '../views/MyInformation.vue')
+  },
+  {
+    path: '/opinion',
+    name: 'opinion',
+    component : () => import(/* webpackChunkName: "about" */ '../views/Opinion.vue')
+  },
+  {
+    path: '/versionNumber',
+    name: 'versionNumber',
+    component : () => import(/* webpackChunkName: "about" */ '../views/VersionNumber.vue')
   }
 ]
 
@@ -50,15 +60,17 @@ const router = createRouter({
 })
 router.beforeEach((to,from,next)=>{
   const token=localStorage.getItem('token')
-  if(to.path==='/login'||to.path==='/zc'||to.path==='/home'){
-    next()
-  }else{
-    if(!token){
-      next('/login')
-    }else{
-      next()
+  if(to.path==='/login'||to.path==='/opinion'||to.path==='/versionNumber'||to.path==='/zc'){
+    if(!token) {
+      next ()
+      return
     }
+    next ('/home')
   }
+  if(!token){
+    next('/login')
+  }
+  next()
 })
 
 export default router

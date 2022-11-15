@@ -14,6 +14,12 @@ const {userRef,btnDisabledCom,onClickUserType}=useUser()
   <div class="text-flex text-link" @click="$router.push('/zc')">
     注册
   </div>
+  <div class="text-flex text-link" @click="$router.push('/opinion')">
+    发送意见
+  </div>
+  <div class="text-flex text-link" @click="$router.push('/versionNumber')">
+    版本号
+  </div>
 
 </template>
 
