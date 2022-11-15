@@ -36,6 +36,11 @@ const routes = [
     path: '/zc',
     name: 'Reg',
     component : () => import(/* webpackChunkName: "about" */ '../views/Reg.vue')
+  },
+  {
+    path: '/minformation',
+    name: 'minformation',
+    component : () => import(/* webpackChunkName: "about" */ '../views/MyInformation.vue')
   }
 ]
 
@@ -45,7 +50,7 @@ const router = createRouter({
 })
 router.beforeEach((to,from,next)=>{
   const token=localStorage.getItem('token')
-  if(to.path==='/login'||to.path==='/zc'){
+  if(to.path==='/login'||to.path==='/zc'||to.path==='/home'){
     next()
   }else{
     if(!token){
