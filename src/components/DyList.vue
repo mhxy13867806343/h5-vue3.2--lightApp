@@ -20,7 +20,7 @@ const createTimeComputed=computed(()=>{
               round
               width="5rem"
               height="5rem"
-              :src="'http://localhost:8010/'+item.avatar"
+              :src="$host1+item.avatar"
           />
           <p class="p-content">
             <span v-html="item.content"></span>

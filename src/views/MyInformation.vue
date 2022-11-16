@@ -1,18 +1,14 @@
 <script setup>
-import {reactive} from 'vue'
-const informationRef=reactive({
-  nickname:'',
-  username:''
-})
+import userMyDetails from '@/hooks/userMyDetails'
+const {informationRef,onBeforeRead,onAfterRead,onClickSave}=userMyDetails()
 </script>
 <template>
   <div class="justify-center img-centered">
-    <van-image
-        round
-        width="5rem"
-        height="5rem"
-        src="https://unpkg.com/@vant/assets/cat.jpeg"
+    <van-uploader v-model="informationRef.fileList" deletable  :max-count="1"
+                  :before-read="onBeforeRead"
+                  :after-read="onAfterRead"
     />
+
   </div>
   <van-cell-group inset>
     <!-- 输入任意文本 -->
@@ -20,7 +16,7 @@ const informationRef=reactive({
     <van-field label-class="informationRef" v-model="informationRef.nickname" label="昵称" clearable colon center placeholder="请输入昵称"/>
   </van-cell-group>
   <div class="justify-center img-centered-1">
-    <van-button hairline type="primary" block round>保存</van-button>
+    <van-button hairline type="primary" block round @click="onClickSave">保存</van-button>
   </div>
 </template>
 

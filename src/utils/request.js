@@ -2,7 +2,7 @@ import axios from 'axios'
 import router from '../router'
 import { Toast } from 'vant'
 const service = axios.create({
-  baseURL: 'http://localhost:8010/', // url = base url + request url
+  baseURL: process.env.VUE_APP_WECHAT_AUTH_URL, // url = base url + request url
   withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000, // request timeout
 })
@@ -17,6 +17,7 @@ service.interceptors.request.use(
     return config
   },
   error => {
+
     Toast.clear()
     // do something with request error
       return Promise.reject(error)
@@ -27,6 +28,7 @@ service.interceptors.response.use(
   response => {
     Toast.clear()
     const {status,data,msg} = response
+
     if(status === 200){
 
         const {code,msg} = data
@@ -39,8 +41,8 @@ service.interceptors.response.use(
     }
   },
   error => {
-    const data = error.response.data
-    if(data.code===401){
+    const {data,status} = error.response
+    if(status===401){
       router.push('/login')
       localStorage.clear()
     }

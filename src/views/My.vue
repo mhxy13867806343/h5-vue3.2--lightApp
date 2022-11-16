@@ -1,4 +1,6 @@
 <script setup>
+import userMyDetails from '@/hooks/userMyDetails'
+const {myDetail}=userMyDetails()
 import {useRouter} from 'vue-router'
 const router = useRouter()
 //退出登录
@@ -13,10 +15,11 @@ const onClickLont=()=>{
         round
         width="5rem"
         height="5rem"
-        src="https://unpkg.com/@vant/assets/cat.jpeg"
+        :src="$host1+myDetail.avatar"
     />
   </div>
   <van-cell-group inset>
+    <van-cell center title="我的昵称"  :value="myDetail.nickname"/>
     <van-cell center title="我的信息" is-link  to="minformation"/>
   </van-cell-group>
   <div class="justify-center img-centered-1">
