@@ -11,7 +11,6 @@ onMounted(()=>{
 const getUserLabel1=()=>{
   getUserLabel({id:_id}).then(res=>{
     labelList.value=res.data
-    console.log(labelList.value,22)
   })
 }
 const onClickLabelSave=()=>{
@@ -54,7 +53,7 @@ const onCloseUserTab=index=>{
 
 }
 const onClickSend=(lable_name)=>{
-  if(labelList.value.length>5){
+  if(labelList.value.length>4){
     Toast('标签长度不能超过5个,请先删除几个吧')
     return
   }
@@ -74,6 +73,7 @@ const onClickSend=(lable_name)=>{
       Toast.success(msg)
       labelList.value.unshift({lable_name})
       labelRef.value=''
+      getUserLabel1()
     }else{
       Toast.fail(msg)
     }
