@@ -44,3 +44,27 @@ export const postUserSave= data => {
     data,    method: 'post'
   })
 }
+
+//添加用户标签
+export const postUserLabel= data => {
+  return request({
+    url: '/users/label',
+    data,    method: 'post'
+  })
+}
+
+//删除用户标签
+export const delUserLabel= params => {
+  return request({
+    url: '/users/label',
+    params,    method: 'delete'
+  })
+}
+
+//获取用户标签
+export const getUserLabel= params => {
+  return request({
+    url: '/users/label',
+    params,
+  })
+}

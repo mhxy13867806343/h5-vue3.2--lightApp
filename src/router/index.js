@@ -51,6 +51,11 @@ const routes = [
     path: '/versionNumber',
     name: 'versionNumber',
     component : () => import(/* webpackChunkName: "about" */ '../views/VersionNumber.vue')
+  },
+  {
+    path: '/mlabel',
+    name: 'mlabel',
+    component : () => import(/* webpackChunkName: "about" */ '../views/MyLable.vue')
   }
 ]
 

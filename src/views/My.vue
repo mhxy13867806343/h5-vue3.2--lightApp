@@ -21,6 +21,7 @@ const onClickLont=()=>{
   <van-cell-group inset>
     <van-cell center title="我的昵称"  :value="myDetail.nickname"/>
     <van-cell center title="我的信息" is-link  to="minformation"/>
+    <van-cell center title="我的标签" is-link  to="mlabel"/>
   </van-cell-group>
   <div class="justify-center img-centered-1">
     <van-button hairline type="primary" block round @click="onClickLont">退出</van-button>

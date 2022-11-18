@@ -41,8 +41,9 @@ service.interceptors.response.use(
     }
   },
   error => {
-    const {data,status} = error.response
+    const {data:{detail:{msg}},status} = error.response
     if(status===401){
+      Toast.fail(msg)
       router.push('/login')
       localStorage.clear()
     }
