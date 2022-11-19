@@ -57,30 +57,26 @@ const formatter = (day) => {
   const date = day.date.getDate();
   const MM=+moment().format('MM')
   let list=[
-    { time: '2022-11-11',checked:true},
+    { time: '2022-11-11',checked:false},
     { time: '2022-11-12',checked:true},
     { time: '2022-11-13',checked:true},
     { time: '2022-11-14',checked:true},
-    { time: '2022-11-15',checked:true},
     { time: '2022-11-16',checked:true},
-    { time: '2022-11-17',checked:true},
-    { time: '2022-11-18',checked:true},
+    { time: '2022-11-18',checked:false},
   ]
-  list=list.map(item=>{
-    const temp=+moment(item.time).format("DD")
-    return temp
-  })
+  const vm=moment(day.date).add(-1, 'months').format('YYYY-MM-DD')
   if (month === MM) {
     list.map(item=>{
       const temp=+moment(item.time).format("DD")
-      if (date <=temp-1) {
-        day.bottomInfo='true'
-        day.className='day-classNames'
+      if(item.checked){
+        if(vm===item.time){
+          day.bottomInfo='true'
+          day.className='day-classNames'
+        }
       }
-    })
 
+    })
   }
-  console.log(day,2222)
   return day;
 };
 </script>
