@@ -6,6 +6,7 @@
 .text-flex{
   display: flex;
   justify-content: flex-end;
+  align-items: center;
 }
 .justify-center{
   display: flex;

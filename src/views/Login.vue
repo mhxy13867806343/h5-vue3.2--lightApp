@@ -11,14 +11,15 @@ const {userRef,btnDisabledCom,onClickUserType}=useUser()
               :disabled="btnDisabledCom"
   @click="onClickUserType(1)"
   >登录</van-button>
-  <div class="text-flex text-link" @click="$router.push('/zc')">
-    注册
-  </div>
-  <div class="text-flex text-link" @click="$router.push('/opinion')">
-    发送意见
-  </div>
-  <div class="text-flex text-link" @click="$router.push('/versionNumber')">
-    版本号
+  <div class="text-flex">
+    <div class="iconfont icon-zhuce text-flex text-link" @click="$router.push('/zc')">注册
+    </div>
+    <div class="iconfont icon-yijianfankui text-flex text-link" @click="$router.push('/opinion')">
+      反馈意见
+    </div>
+    <div class="iconfont icon-banben text-flex text-link" @click="$router.push('/versionNumber')">
+      版本号
+    </div>
   </div>
 
 </template>

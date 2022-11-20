@@ -10,7 +10,7 @@ const {userRef,btnDisabledCom,onClickUserType}=useUser()
   <van-button hairline  round block type="primary"
               :disabled="btnDisabledCom"
               @click="onClickUserType(2)">注册</van-button>
-  <div class="text-flex text-link" @click="$router.push('/login')">
+  <div class="text-flex text-link iconfont icon-denglu" @click="$router.push('/login')">
     已注册,去登录
   </div>
 
