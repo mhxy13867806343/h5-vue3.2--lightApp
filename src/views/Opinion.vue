@@ -1,72 +1,83 @@
 <script setup>
-
-import { reactive,getCurrentInstance,ref,onMounted } from 'vue';
+import {postSendMail}from '@/api/email'
+import {Toast,Dialog} from 'vant'
+import { reactive,ref,onMounted } from 'vue';
 // 引入组件
 import Vue3Tinymce from '@jsdawn/vue3-tinymce';
-const host1=getCurrentInstance ().appContext.config.globalProperties.$host1
-const state = reactive({
-  content: '',
-  // editor 配置项
-  setting: {
-    toolbar:
-        'undo redo | fullscreen | blocks alignleft aligncenter alignright alignjustify | link unlink | numlist bullist | image media table | fontsize forecolor backcolor | bold italic underline strikethrough | indent outdent | superscript subscript | removeformat |',
-    quickbars_selection_toolbar:
-        'removeformat | bold italic underline strikethrough | fontsize forecolor backcolor',
-    plugins: 'link image media table lists fullscreen quickbars',
-    font_size_formats: '12px 14px 16px 18px',
-    menubar: false,
-    height: 300,
-    toolbar_mode: 'sliding',
-    nonbreaking_force_tab: true,
-    link_title: false,
-    link_default_target: '_blank',
-    content_style: 'body{font-size: 16px}',
-    // 自定义 图片上传模式
-    custom_images_upload: true,
-    images_upload_url: `${host1}histry/upload`,
-    custom_images_upload_callback: (res) => {
-      console.log(res);
-      return host1+res.data;
-    },
-    custom_images_upload_param: {  },
-    language: 'zh-Hans',
-    language_url: '/tinymce/langs/zh-Hans.js',
-  },
-});
-const formPopReactive=reactive({
-  show:false,
-  email:'',
-  list:[
-    { text: '@qq.com' },
-    { text: '@163.com' },
-  ],
-  activeIndex:0,
-  text:''
+import useDict from '@/hooks/useDict'
+const {
+  editFormPopReactive, editTextState, getDictChildList1,getDictChildList2,onProjiectActionsSelect }=useDict()
+onMounted(()=> {
+  Dialog.alert ( {
+    title : '提示' ,
+    message : '当前反馈版本，请使用腾讯邮箱进行反馈，谢谢！，后期新增功能会继续完善' ,
+  } ).then ( () => {
+    // on close
+  } );
+  getDictChildList1("email")
+  getDictChildList2("subject")
 })
-onMounted(()=>{
-  formPopReactive.text=formPopReactive.list[0].text
-})
-const onActionsSelect=(item,index)=>{
-  formPopReactive.text=item.text
-  formPopReactive.activeIndex=index
-  formPopReactive.show=false
+const onEmailActionsSelect=(item,index)=>{
+  onProjiectActionsSelect(item,index,'email',)
+}
+const onSubjectActionsSelect=(item,index)=>{
+  onProjiectActionsSelect(item,index,'subject')
 }
 const onSubmit=()=>{
-  console.log(state.content,22)
+  if(!editFormPopReactive.email.text){
+    return Toast("请输入您的邮箱地址前缀")
+  } if (editFormPopReactive.email.text.includes("@")) {
+    return Toast("邮箱地址前缀不能包含@")
+  }
+  if (!editFormPopReactive.subject.value) {
+    return Toast("请选择反馈主题")
+  }
+  if(!editTextState.content){
+    return Toast("请填写反馈内容")
+  }
+  const _editFormPopReactive=editFormPopReactive.email
+  const data={
+    address:_editFormPopReactive.text,
+    host:_editFormPopReactive.value,
+    cotent:editTextState.content,
+    subject:editFormPopReactive.subject.text
+  }
+  postSendMail(data).then(res=>{
+    console.log(res)
+    editTextState.content=''
+  })
+
 }
 </script>
 <template>
   <van-cell-group inset>
     <!-- 输入任意文本 -->
-    <van-field label="邮箱地址" v-model="formPopReactive.email" placeholder="邮箱地址" clearable center>
+    <van-field label="您的邮箱地址" v-model="editFormPopReactive.email.text" placeholder="请输入您的邮箱地址" clearable center>
       <template #button>
-        <van-popover v-model:show="formPopReactive.show" >
-          <van-cell :value="item.text" v-for="(item,index) in formPopReactive.list" :key="index"
-                    @click="onActionsSelect(item,index)"
-                    :class="{'active-toogle':index===formPopReactive.activeIndex}"
+        <van-popover v-model:show="editFormPopReactive.email.show" >
+          <van-cell :value="item.key_value" v-for="(item,index) in editFormPopReactive.email.list" :key="index"
+                    @click="onEmailActionsSelect(item,index)"
+                    :class="{'active-toogle':index===editFormPopReactive.email.index}"
           />
           <template #reference>
-            {{formPopReactive.text}}
+            {{editFormPopReactive.email.value}}
+          </template>
+        </van-popover>
+      </template>
+    </van-field>
+    <van-field label="反馈" v-model="editFormPopReactive.subject.text" placeholder="请选择反馈"
+               :disabled="editFormPopReactive.subject.value!=='其他'"
+
+               center>
+
+      <template #button>
+        <van-popover v-model:show="editFormPopReactive.subject.show" >
+          <van-cell :value="item.key_value" v-for="(item,index) in editFormPopReactive.subject.list" :key="index"
+                    @click="onSubjectActionsSelect(item,index)"
+                    :class="{'active-toogle':index===editFormPopReactive.subject.index}"
+          />
+          <template #reference>
+            {{editFormPopReactive.subject.value}}
           </template>
         </van-popover>
       </template>
@@ -74,9 +85,9 @@ const onSubmit=()=>{
   </van-cell-group>
   <vue3-tinymce
       script-src="/tinymce/tinymce.min.js"
-      v-model="state.content"
+      v-model="editTextState.content"
 
-      :setting="state.setting" />
+      :setting="editTextState.setting" />
   <div class="justify-center img-centered-1">
     <van-button hairline type="primary" block round @click="onSubmit">提交</van-button>
   </div>

@@ -1,6 +1,17 @@
 <script setup>
 import useUser from '@/hooks/useUser'
 const {userRef,btnDisabledCom,onClickUserType}=useUser()
+import {getDictList} from '@/api/dict'
+import {onMounted} from 'vue'
+onMounted(()=>{
+  const _key='dictList'
+  getDictList({
+    page_size:100
+  }).then(res=>{
+    localStorage.setItem(_key,JSON.stringify(res.data))
+  })
+
+})
 </script>
 <template>
   <van-cell-group inset>
