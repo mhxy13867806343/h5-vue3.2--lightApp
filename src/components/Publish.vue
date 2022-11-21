@@ -6,6 +6,9 @@ const onClickSendpublish=()=>{
   const avatar=JSON.parse(localStorage.getItem('user')).avatar
   if(!avatar){
     Toast('没有头像')
+    setTimeout(()=>{
+      router.push('/minformation')
+    },1000)
     return
   }
   router.push('/sendpublish')

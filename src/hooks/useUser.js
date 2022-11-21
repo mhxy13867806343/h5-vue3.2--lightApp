@@ -28,6 +28,7 @@ export default ()=>{
     if(type===2){
       Toast.clear()
       postRegister({username,password}).then(res=>{
+        Toast.fail(res.msg)
         if(res.code===6001){
           router.push('/login')
         }else{
@@ -40,9 +41,10 @@ export default ()=>{
       params.append('username', username)
       params.append('password', password)
       postLogin(params).then(res=>{
+        Toast.fail(res.msg)
         if(res.code===6000){
           router.push('/zc')
-        }else{
+        }else if(res.code==200){
           const {data,token}=res
           localStorage.setItem('token',token)
           localStorage.setItem('user',JSON.stringify(data))

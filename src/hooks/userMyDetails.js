@@ -54,6 +54,10 @@ export default ()=>{
     })
   }
   const onClickSave=()=>{
+    if(!informationRef.nickname){
+      Toast.fail('请输入昵称')
+      return
+    }
     const formData=new FormData()
     formData.append('avatar',informationRef.avatar)
     formData.append('nickname',informationRef.nickname)

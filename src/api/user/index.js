@@ -33,14 +33,14 @@ export const postSendpublish = data => {
 //上传头像
 export const postUpload= data => {
   return request({
-    url: '/users/upload',
+    url: 'users/upload',
     data, method: 'post'
   })
 }
 //用户信息保存
 export const postUserSave= data => {
   return request({
-    url: '/users/userSave',
+    url: 'users/userSave',
     data,    method: 'post'
   })
 }
@@ -48,7 +48,7 @@ export const postUserSave= data => {
 //添加用户标签
 export const postUserLabel= data => {
   return request({
-    url: '/users/label',
+    url: 'users/label',
     data,    method: 'post'
   })
 }
@@ -56,7 +56,7 @@ export const postUserLabel= data => {
 //删除用户标签
 export const delUserLabel= params => {
   return request({
-    url: '/users/label',
+    url: 'users/label',
     params,    method: 'delete'
   })
 }
@@ -64,7 +64,14 @@ export const delUserLabel= params => {
 //获取用户标签
 export const getUserLabel= params => {
   return request({
-    url: '/users/label',
+    url: 'users/label',
     params,
+  })
+}
+//修改密码
+export const postUserUpPwd= data => {
+  return request({
+    url: 'users/updatpwd',
+    data,    method: 'post'
   })
 }
