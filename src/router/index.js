@@ -62,6 +62,18 @@ const routes = [
     path: '/mcenter',
     name: 'mcenter',
     component : () => import(/* webpackChunkName: "about" */ '../views/MyCenter.vue')
+  },
+  {
+
+    path: '/mupwd',
+    name: 'mupwd',
+    component : () => import(/* webpackChunkName: "about" */ '../views/MyUpadPwd.vue')
+  },
+  {
+
+    path: '/myCheckInRecords',
+    name: 'myCheckInRecords',
+    component : () => import(/* webpackChunkName: "about" */ '../views/MyCheckInRecords.vue')
   }
 ]
 
