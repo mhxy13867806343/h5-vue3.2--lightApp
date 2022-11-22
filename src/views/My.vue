@@ -1,12 +1,21 @@
 <script setup>
+import {Toast} from 'vant'
+import {postUserLogut}from '@/api/user'
 import userMyDetails from '@/hooks/userMyDetails'
 const {myDetail}=userMyDetails()
 import {useRouter} from 'vue-router'
 const router = useRouter()
 //退出登录
 const onClickLont=()=>{
-  router.push('/login')
-  localStorage.clear()
+postUserLogut().then(res=>{
+  const {code,msg}=res
+  Toast(msg)
+  if(code===200){
+    router.push('/login')
+    localStorage.clear()
+  }
+})
+
 }
 </script>
 <template>

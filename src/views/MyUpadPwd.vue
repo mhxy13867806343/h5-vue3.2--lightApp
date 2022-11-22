@@ -18,11 +18,14 @@ onMounted(()=>{
 const getPostToken=()=>{
   postToken({}).then(res=>{
     const {code,data}=res
+
     if ( code===200 ){
-      informationRef.user = data
-      informationRef.pwdCount= data.pwdCount
-      informationRef.username=informationRef.user.username
-      informationRef.nickname=informationRef.user.nickname
+      setTimeout(()=>{
+        informationRef.user =data
+        informationRef.pwdCount= informationRef.user .pwdCount
+        informationRef.username=informationRef.user.username
+        informationRef.nickname=informationRef.user.nickname
+      },1000)
     }
   })
 }

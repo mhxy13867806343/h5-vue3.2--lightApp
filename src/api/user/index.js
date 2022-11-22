@@ -75,3 +75,11 @@ export const postUserUpPwd= data => {
     data,    method: 'post'
   })
 }
+//退出
+export const postUserLogut= data => {
+  return request({
+    url: 'users/logut',
+    data,
+    method: 'post'
+  })
+}
