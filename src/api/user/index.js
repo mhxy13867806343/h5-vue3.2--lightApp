@@ -83,3 +83,29 @@ export const postUserLogut= data => {
     method: 'post'
   })
 }
+//获取用户标签
+export const getsignature= data => {
+  return request({
+    url: 'users/getsignature',
+    data,
+    method: 'post'
+  })
+}
+
+//新增用户标签
+export const postUserSignature= data => {
+  return request({
+    url: 'users/signature',
+    data,
+    method: 'post'
+  })
+}
+
+//修改用户标签
+export const putUsersignature= data => {
+  return request({
+    url: 'users/signature',
+    data,
+    method: 'put'
+  })
+}
