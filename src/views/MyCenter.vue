@@ -1,14 +1,25 @@
 <script setup>
-import {ref,onMounted,reactive} from 'vue'
+import {getUsersPoint,postUsersPoint}from '@/api/point'
+import {ref,onMounted,reactive,computed} from 'vue'
 import moment from 'moment'
 const calendarReactive =reactive({
   start: new Date(),
   end:new Date(),
   defaultDate: new Date(),
-  list:[]
+  list:[],
+  data:{
+    "user_id": 0,
+    "points": 0,
+    "is_check": 0,
+    "check_time": 0,
+    "check_in_days": 0,
+    "now_days": 0,
+    "potinList":[]
+  }
 })
 const posShow=ref(false)//积分规则
 onMounted(()=>{
+  getUsersPoint1()
   calndarSplit()
 })
 const calndarSplit=()=>{
@@ -19,27 +30,10 @@ const calndarSplit=()=>{
   calendarReactive.end=end
   calendarReactive.defaultDate=splitData(moment())
 }
-//测试使用的
-const abc=()=>{
-  let list=[
-      { time: '2022-11-11',checked:true},
-      { time: '2022-11-12',checked:true},
-      { time: '2022-11-13',checked:true},
-      { time: '2022-11-14',checked:true},
-      { time: '2022-11-15',checked:true},
-      { time: '2022-11-16',checked:true},
-      { time: '2022-11-17',checked:true},
-      { time: '2022-11-18',checked:true},
-  ]
-  list=list.map(item=>{
-    const temp=moment(item.time).format("YYYY-MM-DD").valueOf()
-    return {
-      time:temp,
-      checked:moment(calendarReactive.defaultDate).subtract(1,'month').format('YYYY-MM-DD')===temp
-    }
+const getUsersPoint1=()=>{
+  getUsersPoint().then(res=>{
+    calendarReactive.data=res.data
   })
-  calendarReactive.list=list
-  console.log(calendarReactive.list,2)
 }
 const splitData=data=>{
   const temp=data.format("YYYY-MM-DD").split('-')
@@ -49,21 +43,24 @@ const onClickPotion=()=>{
   posShow.value=true
 }
 const onClickSave=()=>{
-  console.log(moment(calendarReactive.defaultDate).valueOf())
-  console.log(moment().valueOf())
+  postUsersPoint({time:moment(calendarReactive.defaultDate).valueOf()}).then(res=>{
+    const {code}=res
+    if(code===200){
+      getUsersPoint1()
+    }
+  })
 }
 const formatter = (day) => {
   const month = day.date.getMonth();
   const date = day.date.getDate();
   const MM=+moment().format('MM')
-  let list=[
-    { time: '2022-11-11',checked:false},
-    { time: '2022-11-12',checked:true},
-    { time: '2022-11-13',checked:true},
-    { time: '2022-11-14',checked:true},
-    { time: '2022-11-16',checked:true},
-    { time: '2022-11-18',checked:false},
-  ]
+  const potinList=calendarReactive.data.potinList
+  const list =potinList.map(item=>{
+    return {
+      time:moment(item.time).format('yyyy-MM-DD'),
+      checked:item.is_Check?true:false
+    }
+  })
   const vm=moment(day.date).add(-1, 'months').format('YYYY-MM-DD')
   if (month === MM) {
     list.map(item=>{
@@ -79,20 +76,21 @@ const formatter = (day) => {
   }
   return day;
 };
+
 </script>
 <template>
 <div class="center">
   <van-cell-group inset>
-    <van-cell title="积分说明" :value="`共${400}积分`"  is-link>
+    <van-cell title="积分说明"   is-link>
       <template #label>
         <van-icon name="question-o" @click="onClickPotion" />
       </template>
     </van-cell>
   </van-cell-group>
   <div class="top justify-center">
-    <p>当前签到<span class="span-text span-text-active">400</span>天</p>
-    <p>已连续签到<span class="span-text">400</span>天</p>
-    <p>获取积分<span class="span-text">400</span>分</p>
+    <p>当前签到<span class="span-text span-text-active">{{calendarReactive.data.now_days||0}}</span>天</p>
+    <p>已连续签到<span class="span-text">{{calendarReactive.data.check_in_days||0}}</span>天</p>
+    <p>获取积分<span class="span-text">{{calendarReactive.data.points||0}}</span>分</p>
   </div>
 </div>
   <van-calendar
@@ -114,7 +112,12 @@ const formatter = (day) => {
     </template>
   </van-calendar>
   <div class="justify-center img-centered-1">
-    <van-button hairline type="primary" block round @click="onClickSave">签到</van-button>
+    <van-button hairline type="primary" block round @click="onClickSave"
+    :disabled="calendarReactive.data.is_check"
+    >
+
+      {{calendarReactive.data.is_check===1?'已签到':'签到'}}
+    </van-button>
   </div>
   <van-popup  v-model:show="posShow" position="center" :style="{width:'80%' }" round closeable >
 
