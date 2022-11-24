@@ -6,3 +6,9 @@ export const getHistry = params => {
     params,
   })
 }
+export const getSoupfapig = params => {
+  return request({
+    url: 'histry/soupfapig',
+    params,
+  })
+}
