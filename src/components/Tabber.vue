@@ -11,6 +11,11 @@ const pathreactive=reactive({
       inactive: 'icon-shouye',
       name:'首页'
     },
+		{
+			active: 'icon-resou-copy',
+			inactive: 'icon-resou',
+			name:'热搜'
+		},
     {
       active: 'icon-wode-copy',
       inactive: 'icon-wode',
@@ -20,14 +25,15 @@ const pathreactive=reactive({
 })
 onMounted(()=>{
   //页面刷新
-  const list =['/home','/my']
+  const list =['/home','/hot','/my']
   const index=list.findIndex(item=>item===route.path)
   active.value=index ||0
 })
 const onChange=(active)=>{
   const d={
     0:'/home',
-    1:'/my'
+		1:'/hot',
+    2:'/my'
   }
   router.push(d[active])
 }

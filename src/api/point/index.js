@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-//获取用户积分
+//获取用户是否签到过
 export const getUsersPoint = params => {
   return request({
     url: 'users/point',

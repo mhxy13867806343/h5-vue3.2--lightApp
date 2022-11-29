@@ -14,8 +14,8 @@ const calendarReactive =reactive({
     "check_time": 0,
     "check_in_days": 0,
     "now_days": 0,
-    "potinList":[]
-  }
+  },
+  potinList:[]
 })
 const posShow=ref(false)//积分规则
 onMounted(()=>{
@@ -32,7 +32,11 @@ const calndarSplit=()=>{
 }
 const getUsersPoint1=()=>{
   getUsersPoint().then(res=>{
-    calendarReactive.data=res.data
+    if(res.data){
+      calendarReactive.data=res.data.data
+      calendarReactive.potinList=res.data.list
+    }
+
   })
 }
 const splitData=data=>{
@@ -54,10 +58,10 @@ const formatter = (day) => {
   const month = day.date.getMonth();
   const date = day.date.getDate();
   const MM=+moment().format('MM')
-  const potinList=calendarReactive.data.potinList
+  const potinList=calendarReactive?.potinList||[]
   const list =potinList.map(item=>{
     return {
-      time:moment(item.time).format('yyyy-MM-DD'),
+      time:moment(item.check_time*1000).format('yyyy-MM-DD'),
       checked:item.is_Check?true:false
     }
   })
@@ -88,9 +92,9 @@ const formatter = (day) => {
     </van-cell>
   </van-cell-group>
   <div class="top justify-center">
-    <p>当前签到<span class="span-text span-text-active">{{calendarReactive.data.now_days||0}}</span>天</p>
-    <p>已连续签到<span class="span-text">{{calendarReactive.data.check_in_days||0}}</span>天</p>
-    <p>获取积分<span class="span-text">{{calendarReactive.data.points||0}}</span>分</p>
+    <p>当前签到<span class="span-text span-text-active">{{calendarReactive.data?.now_days||0}}</span>天</p>
+    <p>已连续签到<span class="span-text">{{calendarReactive.data?.check_in_days||0}}</span>天</p>
+    <p>获取积分<span class="span-text">{{calendarReactive.data?.points||0}}</span>分</p>
   </div>
 </div>
   <van-calendar
@@ -113,10 +117,9 @@ const formatter = (day) => {
   </van-calendar>
   <div class="justify-center img-centered-1">
     <van-button hairline type="primary" block round @click="onClickSave"
-    :disabled="calendarReactive.data.is_check"
+    :disabled="calendarReactive.data?.is_Check"
     >
-
-      {{calendarReactive.data.is_check===1?'已签到':'签到'}}
+      {{calendarReactive.data?.is_Check?'已签到':'签到'}}
     </van-button>
   </div>
   <van-popup  v-model:show="posShow" position="center" :style="{width:'80%' }" round closeable >
