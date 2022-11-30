@@ -85,6 +85,18 @@ const routes = [
     path: '/myiMore',
     name: 'myiMore',
     component : () => import(/* webpackChunkName: "about" */ '../views/MyInformatMore.vue')
+  },
+  {
+
+    path: '/circleOfFriends',
+    name: 'circleOfFriends',
+    component : () => import(/* webpackChunkName: "about" */ '../views/CircleOfFriends.vue')
+  },
+  {
+
+    path: '/circlesend',
+    name: 'circlesend',
+    component : () => import(/* webpackChunkName: "about" */ '../views/CircleOfFriendSend.vue')
   }
 ]
 

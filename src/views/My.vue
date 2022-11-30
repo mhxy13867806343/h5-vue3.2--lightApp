@@ -28,6 +28,7 @@ postUserLogut().then(res=>{
     />
   </div>
   <van-cell-group inset title=" ">
+    <van-cell center title="朋友圈"  to="circleOfFriends" is-link/>
     <van-cell center title="我的昵称"  :value="myDetail.nickname"/>
     <van-cell center title="我的信息" is-link  to="minformation"/>
     <van-cell center title="我的标签" is-link  to="mlabel"/>
