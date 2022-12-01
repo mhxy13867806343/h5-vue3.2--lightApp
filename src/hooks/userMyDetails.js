@@ -20,6 +20,7 @@ export default ()=>{
         informationRef.nickname=myDetail.value.nickname
         informationRef.username=myDetail.value.username
         informationRef.avatar=myDetail.value.avatar
+        console.log(22,host1+myDetail.value.avatar)
         informationRef.fileList=[
           {
             url: host1+myDetail.value.avatar,
@@ -44,8 +45,9 @@ export default ()=>{
   const onAfterRead=({file})=>{
     const avatar=file.name
     const formData=new FormData()
-    formData.append('avatar',new Blob([file],{type:'image/jpeg'}),avatar)
+    formData.append('file',new Blob([file],{type:'image/jpeg'}),avatar)
     formData.append('id',+myDetail.value.id)
+    formData.append('type','token')
     postUpload( formData).then(res=>{
       const {code}=res
       if(code===200){

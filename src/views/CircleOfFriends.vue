@@ -1,12 +1,84 @@
 <script setup>
+import {useRouter} from 'vue-router'
+import { Toast } from 'vant';
+import {ref,onMounted} from 'vue'
+import { postUploads} from "@/api/user";
+const router=useRouter()
+function getBase64(file) {
+	return new Promise((resolve, reject) => {
+		///FileReader类就是专门用来读文件的
+		const reader = new FileReader()
+		//开始读文件
+		//readAsDataURL: dataurl它的本质就是图片的二进制数据， 进行base64加密后形成的一个字符串，
+		reader.readAsDataURL(file)
+		// 成功和失败返回对应的信息，reader.result一个base64，可以直接使用
+		reader.onload = () => resolve(reader.result)
+		// 失败返回失败的信息
+		reader.onerror = error => reject(error)
+	})
+}
+const fileJoin=file=>{
+	const {size,type}=file
+	if(size>(1024*1024*2)){
+		Toast('上传图片大小不能超过2M')
+		return false
+	}
+	if(type!=='image/jpeg'&&type!=='image/png'){
+		Toast('上传图片格式必须是jpg或png格式！')
+		return false
+	}
+	return true
+}
+const onBeforeRead=file=>{
+	const {id:userId}=JSON.parse(localStorage.getItem('user'))
+	const uploadPromiseTask = [] //定义上传的promise任务栈
+	let result =false
+	if (file.length){
 
+		file.map(item=>{
+			result=fileJoin(item.file)
+			if (result){
+				uploadPromiseTask.unshift(item.file) //push进每
+			}
+		 }
+		)
+	}else{
+		result=fileJoin(file.file)
+		if (result){
+			uploadPromiseTask.unshift(file.file) //push进每
+		}
+	}
+	if(uploadPromiseTask.length){
+		const formData=new FormData()
+		uploadPromiseTask.map((item,index)=>{
+			formData.append('files',item)
+
+		})
+		formData.append('id',userId)
+		postUploads(formData).then(res=>{
+			const {code}=res
+			if(code===200){
+				router.push({
+					path:'/circlesend'
+				})
+			}
+		})
+	}else{
+		Toast('上传失败！')
+	}
+
+}
 </script>
 <template>
 	<van-nav-bar placeholder fixed>
 		<template #right>
 			 <div class="v-right">
 				 <p class="iconfont icon-shuaxin"></p>
-				 <p class="iconfont icon-xiangji" @click="$router.push('/circlesend')"></p>
+				 <van-uploader multiple   max-count="9"
+											 :after-read="onBeforeRead"
+				 >
+				 <p class="iconfont icon-xiangji"></p>
+				 </van-uploader>
 			 </div>
 		</template>
 	</van-nav-bar>

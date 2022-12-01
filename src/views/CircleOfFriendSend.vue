@@ -1,19 +1,41 @@
 <script setup>
+import {getUploads}from '@/api/user'
 import { Dialog } from 'vant';
-import {ref,onMounted} from 'vue'
-const fileList=ref([])
-const showPopover=ref(false)
-const sendText=ref('')
-const activeText=ref('')
+import {useRoute} from 'vue-router'
+import {ref, onMounted, watch, onUpdated, nextTick, getCurrentInstance} from 'vue'
+const host1=getCurrentInstance ().appContext.config.globalProperties.$host1
+const route = useRoute()
+const fileList=ref([]) // 上传图片列表
+const showPopover=ref(false)// 是否显示弹出层
+const sendText=ref('')// 发送内容
+const activeText=ref('')// 发送内容
 const checkedRef=ref()
 const actionsList=ref([
 	{ key_name: '公开',key_value:1 },
 	{ key_name: '私人',key_value:2 },
 ])
-onMounted(()=>{
+onMounted(async ()=>{
 	activeText.value=actionsList.value[0].key_name
 	checkedRef.value=actionsList.value[0].key_value
+	await fileListDb()
 })
+const fileListDb=()=>{
+	const {id:userId}=JSON.parse(localStorage.getItem('user'))
+	getUploads({id:userId}).then(res=>{
+		const {code,data}=res
+		if(code===200){
+			const list=[]
+			data.split(',').map(item=>{
+				list.push({
+					url:host1+item
+				})
+			})
+			if(list.length){
+				fileList.value=list
+			}
+		}
+	})
+}
 const onSelect = (action) => {
 	activeText.value=action.key_name
 	checkedRef.value=action.key_value
@@ -59,11 +81,13 @@ const onClickLeft = () => {
 				autosize
 				:border="false"
 				clearable
+
 				type="textarea"
-				maxlength="-1"
+				maxlength="288"
 				placeholder="这一刻的想法..."
 		/>
-		<van-uploader v-model="fileList" multiple  :max-count="9" :max-size="500 * 1024" deletable/>
+		<van-uploader deletable  v-model="fileList" multiple  :max-count="9" :max-size="500 * 1024">
+		</van-uploader>
 	</van-cell-group>
 
 
@@ -78,5 +102,8 @@ const onClickLeft = () => {
 }
 /deep/  .van-radio {
 	padding: 10px;
+}
+/deep/ .van-uploader__preview{
+	margin: 1px;
 }
 </style>

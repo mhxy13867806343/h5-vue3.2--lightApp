@@ -37,6 +37,20 @@ export const postUpload= data => {
     data, method: 'post'
   })
 }
+//上传多张图片
+export const postUploads= data => {
+  return request({
+    url: 'users/uploads',
+    data, method: 'post'
+  })
+}
+//获取多张图片
+export const getUploads= params => {
+  return request({
+    url: 'users/uploads',
+    params,
+  })
+}
 //用户信息保存
 export const postUserSave= data => {
   return request({
