@@ -3,6 +3,7 @@ import {getUploads}from '@/api/user'
 import { Dialog } from 'vant';
 import {useRoute} from 'vue-router'
 import {ref, onMounted, watch, onUpdated, nextTick, getCurrentInstance} from 'vue'
+import Emoji from "@/components/Emoji.vue";
 const host1=getCurrentInstance ().appContext.config.globalProperties.$host1
 const route = useRoute()
 const fileList=ref([]) // 上传图片列表
@@ -75,6 +76,7 @@ const onClickLeft = () => {
 		</template>
 	</van-nav-bar>
 	<van-cell-group inset>
+		<Emoji />
 		<van-field
 				v-model="sendText"
 				rows="3"
