@@ -1,6 +1,8 @@
 <script setup>
-import {ref,onMounted,onUnmounted,defineProps,defineEmits,watch,computed} from 'vue'
-let _count=2
+import {getEmojiList} from '@/api/emoji'
+import {ref, onMounted, onUnmounted, defineProps, defineEmits, watch, computed, getCurrentInstance} from 'vue'
+import {Toast} from "vant";
+const host1=getCurrentInstance ().appContext.config.globalProperties.$host1
 const props = defineProps({
 	inputBox: {
 		type: String,
@@ -11,10 +13,45 @@ const props = defineProps({
 const emit=defineEmits(['update:inputBox'])
 const codeDom=ref('')	// 点击空白处隐藏
 const emojiTrgger=ref('') // 触发表情的dom
+const emojiList=ref([]) // 表情列表
 const divInputBox=ref('')// 输入框操作
 const emojiShow=ref(false) // 是否显示表情
 const historyListEmojiRef=ref([]) //历史表情
 const emojiCount=ref(0)// 表情和文本和数量
+
+watch(()=>props.inputBox,(value)=>{
+})
+
+onMounted(() => {
+	const _emojiList=JSON.parse(localStorage.getItem('emojiList'))
+	const _historyListEmoji=JSON.parse(localStorage.getItem('historyListEmoji'))
+	if(_historyListEmoji){
+		historyListEmojiRef.value=_historyListEmoji
+	}
+	if(!_emojiList){
+		getEmojiList1()
+	}else{
+		emojiList.value=_emojiList
+	}
+	document.addEventListener('click', closeSelect)
+	emojiTrggerSelectType('addEventListener')
+	divInputBoxaddEventListener()
+})
+onUnmounted(() => {
+	document.removeEventListener('click', closeSelect)
+	emojiTrggerSelectType('removeEventListener')
+})
+const getEmojiList1=()=>{
+	getEmojiList().then(res=>{
+
+		res.data.map(item=>{
+			item.e_url=host1+item.e_url
+			return item
+		})
+		emojiList.value=res.data
+		localStorage.setItem('emojiList',JSON.stringify(emojiList.value))
+	})
+}
 //点击空白处隐藏
 const closeSelect = (e) => {
 	if (codeDom.value && !codeDom.value.contains(e.target)) {
@@ -29,37 +66,27 @@ const emojiTrggerSelectType=type=>{
 		emojiTrgger.value[type]('click', e=>emojiTrggerSelect(e))
 	}
 }
-onMounted(() => {
-	document.addEventListener('click', closeSelect)
-	emojiTrggerSelectType('addEventListener')
-	divInputBoxaddEventListener()
-})
-onUnmounted(() => {
-	document.removeEventListener('click', closeSelect)
-	emojiTrggerSelectType('removeEventListener')
-})
 const divInputBoxaddEventListener=()=>{
 	divInputBox.value.addEventListener('input',e=>{
-
 		emit('update:inputBox',e.target.innerText)
 		calcTextAreaLength()
 	})
 }
-const onEmojiClick=(i,type)=>{
+const onEmojiClick=(item,type)=>{
 	if ( document.activeElement!==divInputBox.value) {
 		divInputBox.value.focus()
 	}
-	const src =`https://cdn.sunofbeaches.com/emoji/${i}.png`
+	const src =item.e_url
 	const imgSrc=`<img class="emoji-imgs" src="${src}" style="width: 20px;height: 20px;"/>`
 	document.execCommand('insertHTML', true, imgSrc)
 	// divInputBox.value.innerHTML += imgSrc
-
+	document.getSelection().collapseToEnd()
 
 	if(type=='news'){
 		const list=historyListEmojiRef.value
-		saveHistoryEmoji(i)
+		saveHistoryEmoji(item)
 		if(list.length<9){
-			saveHistoryEmoji(i)
+			saveHistoryEmoji(item)
 		}else{
 			historyListEmojiRef.value.pop()
 
@@ -68,14 +95,12 @@ const onEmojiClick=(i,type)=>{
 	}
 
 }
-const calcTextAreaLength=()=>
-{
+const calcTextAreaLength=()=> {
 	let sum=0
 	let reg = /<img class="emoji-imgs" [^>]*>/gi;
 	let stringHtml =divInputBox.value.innerHTML;
 	let stringText =divInputBox.value.innerText; //  拿到输入框中字符长度
 	//  匹配出输入框中的图片表情包个数
-	console.log(stringHtml,22)
 	let emojiArr = stringHtml.match(reg) || [];
 	if(emojiArr.length){
 		sum+=emojiArr.length*1
@@ -83,16 +108,30 @@ const calcTextAreaLength=()=>
 	emojiCount.value = stringText.length + emojiArr.length+sum;
 	return stringText.length + emojiArr.length;
 }
-const onEmojiDelete=()=>{
-	const selection = window.getSelection()
-	if (selection.rangeCount) {
-		selection.deleteFromDocument()
-	}
+const onClickDivInputBoxFocus=()=>{
+	emojiShow.value=!emojiShow.value
+	//divGetSelection()
+	divGetSelection()
+}
+const divGetSelection=()=>{
+	const  esrc = document.getElementById('inputBox');
+
+	var range = document.createRange();
+
+	range.selectNodeContents(esrc);
+
+	range.collapse(false);
+
+	var sel = window.getSelection();
+
+	sel.removeAllRanges();
+
+	sel.addRange(range);
 }
 const restoreEmoji=()=>{
-	if(historyListEmojiRef.value.length){
-		divInputBox.value.innerHTML=historyListEmojiRef.value[0]
-	}
+	historyListEmojiRef.value=[]
+	localStorage.removeItem('historyListEmoji')
+	Toast.success('清除成功')
 }
 //保存历史表情
 const saveHistoryEmoji=(src)=>{
@@ -101,6 +140,13 @@ const saveHistoryEmoji=(src)=>{
 	if(list.indexOf(index)==-1){
 		list.unshift(index)
 	}
+	localStorage.setItem('historyListEmoji',JSON.stringify(list))
+}
+const updateContent=value=>{
+	const _divInputBox=divInputBox.value
+	if (value!==_divInputBox.innerHTML){
+		_divInputBox.innerHTML=value
+	}
 }
 </script>
 <template>
@@ -108,7 +154,7 @@ const saveHistoryEmoji=(src)=>{
 		<div class="emoji-container">
 			<div class="input-box-container">
 				<div class="input-box-edit">
-					<div class="input-box" contenteditable="true" spellcheck="false"
+					<div class="input-box" contenteditable="true" spellcheck="false" id="inputBox"
 							 placeholder="这一刻的想法..."
 							 ref="divInputBox"
 					></div>
@@ -120,29 +166,29 @@ const saveHistoryEmoji=(src)=>{
 			</div>
 			<div class="input-action-position">
 				<div class="input-action-part">
-					<div @click="emojiShow=!emojiShow"><span class="emoji-trgger"
+					<div @click="onClickDivInputBoxFocus"><span class="emoji-trgger"
 					ref="emojiTrgger"
 					>表情</span>
 						<span class="iconfont icon-biaoqing"></span></div>
 
 				</div>
 				<div v-show="emojiShow" class="input-action-absolute">
-					<div class="emoji-title">
+					<div class="emoji-title" v-if="historyListEmojiRef.length">
 
 						<span>最近使用</span>
-						<span class="iconfont icon-shanchu">清空</span>
+						<span class="iconfont icon-shanchu" @click="restoreEmoji">清空</span>
 					</div>
 					<div class="history-container">
-						<img  v-for="i in historyListEmojiRef" :src="`https://cdn.sunofbeaches.com/emoji/${i}.png`" :key="i"
-						@click="onEmojiClick(i,'histry')"
+						<img  v-for="(item,index) in historyListEmojiRef" :src="item.e_url" :key="index"
+						@click="onEmojiClick(item,'histry')"
 						>
 					</div>
 					<div class="emoji-title">
 						所有表情
 					</div>
 					<div class="emoji-all-container">
-						<img  v-for="i in 130" :src="`https://cdn.sunofbeaches.com/emoji/${i}.png`" :key="i"
-									@click="onEmojiClick(i,'news')"
+						<img  v-for="(item,index) in emojiList" :src="item.e_url" :key="index"
+									@click="onEmojiClick(item,'news')"
 						>
 					</div>
 				</div>
