@@ -11,6 +11,7 @@ const showPopover=ref(false)// 是否显示弹出层
 const sendText=ref('')// 发送内容
 const activeText=ref('')// 发送内容
 const checkedRef=ref()
+const inputBoxRef=ref('')
 const actionsList=ref([
 	{ key_name: '公开',key_value:1 },
 	{ key_name: '私人',key_value:2 },
@@ -76,7 +77,7 @@ const onClickLeft = () => {
 		</template>
 	</van-nav-bar>
 	<van-cell-group inset>
-		<Emoji />
+		<Emoji  v-model:inputBox="inputBoxRef"/>
 		<van-field
 				v-model="sendText"
 				rows="3"

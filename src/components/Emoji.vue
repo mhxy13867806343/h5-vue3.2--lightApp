@@ -1,10 +1,20 @@
 <script setup>
-import {ref,onMounted,onUnmounted} from 'vue'
+import {ref,onMounted,onUnmounted,defineProps,defineEmits,watch,computed} from 'vue'
+let _count=2
+const props = defineProps({
+	inputBox: {
+		type: String,
+	}
+})
+
+
+const emit=defineEmits(['update:inputBox'])
 const codeDom=ref('')	// 点击空白处隐藏
 const emojiTrgger=ref('') // 触发表情的dom
 const divInputBox=ref('')// 输入框操作
 const emojiShow=ref(false) // 是否显示表情
 const historyListEmojiRef=ref([]) //历史表情
+const emojiCount=ref(0)// 表情和文本和数量
 //点击空白处隐藏
 const closeSelect = (e) => {
 	if (codeDom.value && !codeDom.value.contains(e.target)) {
@@ -22,11 +32,19 @@ const emojiTrggerSelectType=type=>{
 onMounted(() => {
 	document.addEventListener('click', closeSelect)
 	emojiTrggerSelectType('addEventListener')
+	divInputBoxaddEventListener()
 })
 onUnmounted(() => {
 	document.removeEventListener('click', closeSelect)
 	emojiTrggerSelectType('removeEventListener')
 })
+const divInputBoxaddEventListener=()=>{
+	divInputBox.value.addEventListener('input',e=>{
+
+		emit('update:inputBox',e.target.innerText)
+		calcTextAreaLength()
+	})
+}
 const onEmojiClick=(i,type)=>{
 	if ( document.activeElement!==divInputBox.value) {
 		divInputBox.value.focus()
@@ -35,6 +53,8 @@ const onEmojiClick=(i,type)=>{
 	const imgSrc=`<img class="emoji-imgs" src="${src}" style="width: 20px;height: 20px;"/>`
 	document.execCommand('insertHTML', true, imgSrc)
 	// divInputBox.value.innerHTML += imgSrc
+
+
 	if(type=='news'){
 		const list=historyListEmojiRef.value
 		saveHistoryEmoji(i)
@@ -47,6 +67,21 @@ const onEmojiClick=(i,type)=>{
 
 	}
 
+}
+const calcTextAreaLength=()=>
+{
+	let sum=0
+	let reg = /<img class="emoji-imgs" [^>]*>/gi;
+	let stringHtml =divInputBox.value.innerHTML;
+	let stringText =divInputBox.value.innerText; //  拿到输入框中字符长度
+	//  匹配出输入框中的图片表情包个数
+	console.log(stringHtml,22)
+	let emojiArr = stringHtml.match(reg) || [];
+	if(emojiArr.length){
+		sum+=emojiArr.length*1
+	}
+	emojiCount.value = stringText.length + emojiArr.length+sum;
+	return stringText.length + emojiArr.length;
 }
 const onEmojiDelete=()=>{
 	const selection = window.getSelection()
@@ -66,20 +101,22 @@ const saveHistoryEmoji=(src)=>{
 	if(list.indexOf(index)==-1){
 		list.unshift(index)
 	}
-	list=list.findIndex((item,index)=>{
-		return item==src
-	})
-
 }
 </script>
 <template>
 	<div id="apps" ref="codeDom">
 		<div class="emoji-container">
 			<div class="input-box-container">
-				<div class="input-box" contenteditable="true" spellcheck="false"
-						 placeholder="这一刻的想法..."
-						 ref="divInputBox"
-				></div>
+				<div class="input-box-edit">
+					<div class="input-box" contenteditable="true" spellcheck="false"
+							 placeholder="这一刻的想法..."
+							 ref="divInputBox"
+					></div>
+				</div>
+				<span class="input-count" :style="{'color':emojiCount>1000?'#f53f3f':'',}"
+
+
+				>{{emojiCount}}/1000</span>
 			</div>
 			<div class="input-action-position">
 				<div class="input-action-part">
@@ -120,7 +157,6 @@ const saveHistoryEmoji=(src)=>{
 <style scoped>
 .emoji-container{
 	width:300px;
-	height:200px;
 	margin:30px auto;
 	background-color:#fff;
 }
@@ -138,12 +174,28 @@ const saveHistoryEmoji=(src)=>{
 }
 .input-box-container {
 	padding:1px;
+	position: relative;
+
+}
+.input-box-edit{
+	overflow: hidden;
+	max-height: 230px;
+	overflow-y: scroll;
+}
+.input-count{
+	position: absolute;
+  right: 0;
+  bottom: -15px;
+  font-size: 12px;
+	color: #8a919f;
+  text-align: center;
+  z-index: 1;
 }
 .input-box {
 	margin: 0 auto;
 	background: #efefef;
 	width: 300px;
-	height: 100px;
+	min-height: 100px;
 	outline: none;
 	border: transparent;
 	border-radius: 4px;
