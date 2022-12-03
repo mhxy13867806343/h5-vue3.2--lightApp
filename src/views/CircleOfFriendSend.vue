@@ -76,8 +76,9 @@ const onClickLeft = () => {
 			<van-button type="success" size="mini">发布</van-button>
 		</template>
 	</van-nav-bar>
+	<Emoji  v-model:inputBox="inputBoxRef"/>
 	<van-cell-group inset>
-		<Emoji  v-model:inputBox="inputBoxRef"/>
+
 		<van-field
 				v-model="sendText"
 				rows="3"

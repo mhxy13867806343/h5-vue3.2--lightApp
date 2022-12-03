@@ -1,6 +1,6 @@
 <script setup>
 import {getEmojiList} from '@/api/emoji'
-import {ref, onMounted, onUnmounted, defineProps, defineEmits, watch, computed, getCurrentInstance} from 'vue'
+import {ref, onMounted, onUnmounted, defineProps, defineEmits, watch,nextTick, computed, getCurrentInstance} from 'vue'
 import {Toast} from "vant";
 const host1=getCurrentInstance ().appContext.config.globalProperties.$host1
 const props = defineProps({
@@ -11,7 +11,9 @@ const props = defineProps({
 
 
 const emit=defineEmits(['update:inputBox'])
+const emojiTitleActive=ref(0)	// 表情索引
 const codeDom=ref('')	// 点击空白处隐藏
+const vanTabResize=ref('')	// 外层元素大小或组件显示状态变化时，可以调用此方法来触发重绘	-
 const emojiTrgger=ref('') // 触发表情的dom
 const emojiList=ref([]) // 表情列表
 const divInputBox=ref('')// 输入框操作
@@ -19,7 +21,11 @@ const emojiShow=ref(false) // 是否显示表情
 const historyListEmojiRef=ref([]) //历史表情
 const emojiCount=ref(0)// 表情和文本和数量
 
-watch(()=>props.inputBox,(value)=>{
+watch(()=>emojiShow.value,(value)=>{
+	setTimeout(()=>{
+		vanTabResize.value.resize()
+	},200)
+
 })
 
 onMounted(() => {
@@ -33,6 +39,17 @@ onMounted(() => {
 	}else{
 		emojiList.value=_emojiList
 	}
+	setTimeout(()=>{
+		if(emojiList.value.length){
+			const emojiContainerAll=document.querySelectorAll('.emoji-all-container')
+			const emojiItemAll=document.querySelectorAll('.emoji-item-img-url')
+			const emojiListLen=emojiList.value.length
+			for(let i=0;i<emojiContainerAll.length;i++){
+				const sum=emojiItemAll[i].height*(emojiListLen/24)
+				emojiContainerAll[i].style.maxHeight=sum+'px'
+			}
+		}
+	},200)
 	document.addEventListener('click', closeSelect)
 	emojiTrggerSelectType('addEventListener')
 	divInputBoxaddEventListener()
@@ -83,15 +100,7 @@ const onEmojiClick=(item,type)=>{
 	document.getSelection().collapseToEnd()
 
 	if(type=='news'){
-		const list=historyListEmojiRef.value
 		saveHistoryEmoji(item)
-		if(list.length<9){
-			saveHistoryEmoji(item)
-		}else{
-			historyListEmojiRef.value.pop()
-
-		}
-
 	}
 
 }
@@ -116,13 +125,13 @@ const onClickDivInputBoxFocus=()=>{
 const divGetSelection=()=>{
 	const  esrc = document.getElementById('inputBox');
 
-	var range = document.createRange();
+	const range = document.createRange();
 
 	range.selectNodeContents(esrc);
 
 	range.collapse(false);
 
-	var sel = window.getSelection();
+	const sel = window.getSelection();
 
 	sel.removeAllRanges();
 
@@ -133,20 +142,47 @@ const restoreEmoji=()=>{
 	localStorage.removeItem('historyListEmoji')
 	Toast.success('清除成功')
 }
+//去重方法封装
+const arrUnique=arr=>arr.filter((item, index, arr)=>arr.indexOf(item, 0) === index);
 //保存历史表情
-const saveHistoryEmoji=(src)=>{
-	let index=src
+const saveHistoryEmoji=(item)=>{
 	let  list=historyListEmojiRef.value
-	if(list.indexOf(index)==-1){
-		list.unshift(index)
+	const temp_index=list.indexOf(item)
+	if(temp_index>-1){
+		historyListEmojiRef.value.splice(temp_index,1)
 	}
-	localStorage.setItem('historyListEmoji',JSON.stringify(list))
+	historyListEmojiRef.value.unshift(item)
+
+
+	// 历史记录只保存6条
+
+	if (list && list.length && list.length > 8) {
+
+		list.pop()
+	}
+	localStorage.setItem("historyListEmoji", JSON.stringify(historyListEmojiRef.value));
+
 }
 const updateContent=value=>{
 	const _divInputBox=divInputBox.value
 	if (value!==_divInputBox.innerHTML){
 		_divInputBox.innerHTML=value
 	}
+}
+const onemojiTitleActive=index=>{
+	emojiTitleActive.value=index
+
+}
+const onemojiTabActive=index=>{
+	emojiTitleActive.value=index
+}
+const toGtouchstart=(e,item)=>{
+}
+const toGtouchmove=(e,item)=>{
+
+}
+const toGtouchend=(e,item)=>{
+
 }
 </script>
 <template>
@@ -173,24 +209,58 @@ const updateContent=value=>{
 
 				</div>
 				<div v-show="emojiShow" class="input-action-absolute">
-					<div class="emoji-title" v-if="historyListEmojiRef.length">
+						<span
+								@click="onemojiTitleActive(0)"
+								class="iconfont  icon-111" :class="[emojiTitleActive===0?'icon-biaoqing1-copy':'icon-biaoqing']"></span>
+					<span 	@click="onemojiTitleActive(1)" class="iconfont  icon-111" :class="[emojiTitleActive===1?'icon-biaoqing1-copy':'icon-biaoqing']"></span>
+					<span 	@click="onemojiTitleActive(2)" class="iconfont  icon-111" :class="[emojiTitleActive===2?'icon-biaoqing1-copy':'icon-biaoqing']"></span>
+					<span 	@click="onemojiTitleActive(3)" class="iconfont   icon-111" :class="[emojiTitleActive===3?'icon-biaoqing1-copy':'icon-biaoqing']"></span>
+					<van-tabs
+							@change="onemojiTabActive"
+							v-model:active="emojiTitleActive"  title-active-color="#ee0a24" ref="vanTabResize">
+						<van-tab title="系统表情">
+							<div style="width:100%;height:100%;overflow:hidden;">
+								<div class="emoji-title" v-if="historyListEmojiRef.length">
 
-						<span>最近使用</span>
-						<span class="iconfont icon-shanchu" @click="restoreEmoji">清空</span>
-					</div>
-					<div class="history-container">
-						<img  v-for="(item,index) in historyListEmojiRef" :src="item.e_url" :key="index"
-						@click="onEmojiClick(item,'histry')"
-						>
-					</div>
-					<div class="emoji-title">
-						所有表情
-					</div>
-					<div class="emoji-all-container">
-						<img  v-for="(item,index) in emojiList" :src="item.e_url" :key="index"
-									@click="onEmojiClick(item,'news')"
-						>
-					</div>
+									<span>最近使用({{historyListEmojiRef.length}})</span>
+									<span class="iconfont icon-shanchu" @click="restoreEmoji">清空</span>
+								</div>
+								<div class="history-container">
+<!--									<div class="vishob">-->
+<!--										<img src="http://localhost:8010/uploads/emoji/3.png">-->
+<!--									</div>-->
+									<img  v-for="(item,index) in historyListEmojiRef" :src="item.e_url" :key="index"
+												@touchstart="toGtouchstart($event,item)"
+												@touchmove="toGtouchmove($event,item)"
+												@touchend="toGtouchend($event,item)"
+												@click="onEmojiClick(item,'histry')"
+									>
+								</div>
+								<div class="emoji-title">
+									所有表情({{emojiList.length}})
+								</div>
+								<div class="emoji-all-container">
+									<img  v-for="(item,index) in emojiList" :src="item.e_url" :key="index"
+												class="emoji-item-img-url"
+												@touchstart="toGtouchstart($event,item)"
+												@touchmove="toGtouchmove($event,item)"
+												@touchend="toGtouchend($event,item)"
+												@click="onEmojiClick(item,'news')"
+									>
+								</div>
+							</div>
+						</van-tab>
+						<van-tab title="自定义表情">
+							自定义表情
+						</van-tab>
+						<van-tab title="收藏表情">
+							收藏表情
+						</van-tab>
+						<van-tab title="其他">
+							其他
+						</van-tab>
+					</van-tabs>
+
 				</div>
 			</div>
 		</div>
@@ -275,13 +345,17 @@ const updateContent=value=>{
 }
 .emoji-all-container{
 	overflow-y:scroll;
-	height:200px;
+	max-height: 150px;
+	height: 100%;
 }
-.history-container img ,.emoji-all-container img{
+.history-container img ,.emoji-all-container img,.vishob img{
 	width:30px;
 	height:30px;
 	padding:3px;
 	cursor:pointer;
+}
+.history-container,.emoji-all-container{
+	position:relative
 }
 .emoji-all-container::-webkit-scrollbar {
 	width: 5px;
@@ -303,9 +377,18 @@ const updateContent=value=>{
 	position: absolute;
 	top: 30px;
 	left: 0;
+	width: 100%;
 	background: #fff;
 	box-shadow: 0 8px 24px rgb(0 0 0 / 16%);
 	border-radius: 2px;
 	z-index: 12;
+}
+.icon-111{
+	padding: 10px;
+}
+.icon-biaoqing1-copy:before{
+	color:#d81e06;
+	font-size: 20px;
+  font-weight: bold;
 }
 </style>
