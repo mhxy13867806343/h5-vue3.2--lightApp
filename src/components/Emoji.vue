@@ -1,16 +1,19 @@
 <script setup>
 import {getEmojiList} from '@/api/emoji'
-import {ref, onMounted, onUnmounted, defineProps, defineEmits, watch,nextTick, computed, getCurrentInstance} from 'vue'
+import {ref, onMounted, onUnmounted, defineProps, defineEmits,defineExpose, watch,nextTick, computed, getCurrentInstance} from 'vue'
 import {Toast} from "vant";
 const host1=getCurrentInstance ().appContext.config.globalProperties.$host1
 const props = defineProps({
 	inputBox: {
 		type: String,
-	}
+	},
+	inputLen: {
+		type: Number,
+	},
 })
 
 
-const emit=defineEmits(['update:inputBox'])
+const emit=defineEmits(['update:inputBox','clear'])
 const emojiTitleActive=ref(0)	// 表情索引
 const codeDom=ref('')	// 点击空白处隐藏
 const vanTabResize=ref('')	// 外层元素大小或组件显示状态变化时，可以调用此方法来触发重绘	-
@@ -85,7 +88,7 @@ const emojiTrggerSelectType=type=>{
 }
 const divInputBoxaddEventListener=()=>{
 	divInputBox.value.addEventListener('input',e=>{
-		emit('update:inputBox',e.target.innerText)
+		emit('update:inputBox',e.target.innerHTML)
 		calcTextAreaLength()
 	})
 }
@@ -115,6 +118,7 @@ const calcTextAreaLength=()=> {
 		sum+=emojiArr.length*1
 	}
 	emojiCount.value = stringText.length + emojiArr.length+sum;
+	emit('update:inputLen',emojiCount.value)
 	return stringText.length + emojiArr.length;
 }
 const onClickDivInputBoxFocus=()=>{
@@ -184,12 +188,21 @@ const toGtouchmove=(e,item)=>{
 const toGtouchend=(e,item)=>{
 
 }
+const onClear=()=>{
+	divInputBox.value.innerHTML=''
+	emojiCount.value=0
+	emit('clear')
+}
+defineExpose({
+	onClear
+})
 </script>
 <template>
 	<div id="apps" ref="codeDom">
 		<div class="emoji-container">
 			<div class="input-box-container">
 				<div class="input-box-edit">
+					<van-icon name="cross" v-if="emojiCount>0" @click="onClear"/>
 					<div class="input-box" contenteditable="true" spellcheck="false" id="inputBox"
 							 placeholder="这一刻的想法..."
 							 ref="divInputBox"
@@ -390,5 +403,10 @@ const toGtouchend=(e,item)=>{
 	color:#d81e06;
 	font-size: 20px;
   font-weight: bold;
+}
+.van-icon-cross{
+	width:100%;
+	text-align: right;
+	margin-bottom: 6px;
 }
 </style>

@@ -1,4 +1,6 @@
 <script setup>
+import useUpload from "@/hooks/useUpload";
+const {onAfterRead}=useUpload()
 import{ref} from 'vue'
 import {useRouter} from 'vue-router'
 import { Toast } from 'vant';
@@ -30,35 +32,12 @@ const fileJoin=file=>{
 	return true
 }
 const onBeforeRead=file=>{
-	const {id:userId}=JSON.parse(localStorage.getItem('user'))
-	const uploadPromiseTask = [] //定义上传的promise任务栈
-	if (uploadFile.value.length){
-
-		uploadFile.value.map(item=> {
-			uploadPromiseTask.unshift({
-				content:item.content,
-				"status": item.status,
-				"message":item.message,
-				file:{
-					type:item.file.type,
-					webkitRelativePath:item.file.webkitRelativePath,
-					size:item.file.size,
-					name:item.file.name,
-					lastModified:item.file.lastModified,
-					lastModifiedDate:item.file.lastModifiedDate,
-				}
-			})
-		})
-	}
-	if(uploadPromiseTask.length){
-		localStorage.setItem('suploadPromiseTask',JSON.stringify(uploadPromiseTask))
+	const len=onAfterRead(file,uploadFile.value)
+	if(len){
 		router.push({
 			path:'/circlesend'
 		})
-	}else{
-		Toast('上传失败！')
 	}
-
 }
 </script>
 <template>
