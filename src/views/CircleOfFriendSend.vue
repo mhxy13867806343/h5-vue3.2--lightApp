@@ -1,17 +1,22 @@
 <script setup>
 import {getUploads}from '@/api/user'
 import { Dialog } from 'vant';
-import {useRoute} from 'vue-router'
-import {ref, onMounted, watch, onUpdated, nextTick, getCurrentInstance} from 'vue'
+import {useRoute,useRouter} from 'vue-router'
+import {ref, onMounted, watch, onUpdated, nextTick, getCurrentInstance, reactive} from 'vue'
 import Emoji from "@/components/Emoji.vue";
 const host1=getCurrentInstance ().appContext.config.globalProperties.$host1
 const route = useRoute()
+const router = useRouter()
 const fileList=ref([]) // 上传图片列表
 const showPopover=ref(false)// 是否显示弹出层
 const sendText=ref('')// 发送内容
 const activeText=ref('')// 发送内容
 const checkedRef=ref()
-const inputBoxRef=ref('')
+const previesImg=reactive({
+	show:false,
+	index:0,
+	list:[]
+})
 const actionsList=ref([
 	{ key_name: '公开',key_value:1 },
 	{ key_name: '私人',key_value:2 },
@@ -19,7 +24,17 @@ const actionsList=ref([
 onMounted(async ()=>{
 	activeText.value=actionsList.value[0].key_name
 	checkedRef.value=actionsList.value[0].key_value
-	await fileListDb()
+	const suploadPromiseTask=JSON.parse(localStorage.getItem('suploadPromiseTask'))
+	if(suploadPromiseTask){
+		const _fileList=[]
+		for(let i=0;i<suploadPromiseTask.length;i++){
+			const res=suploadPromiseTask[i]
+			_fileList.push(res)
+		}
+		fileList.value=_fileList
+		//localStorage.removeItem('suploadPromiseTask')
+	}
+
 })
 const fileListDb=()=>{
 	const {id:userId}=JSON.parse(localStorage.getItem('user'))
@@ -44,24 +59,62 @@ const onSelect = (action) => {
 	showPopover.value = false
 }
 const onClickLeft = () => {
-	if(!fileList.value.length){
-		Dialog.confirm({
-			confirmButtonText: '保留',
-			cancelButtonText: '不保留',
-			title: '',
-			message:
-					'保留此次编辑?',
-		})
-				.then(() => {
-					// on confirm
-				})
-				.catch(() => {
-					// on cancel
-				});
-	}
+	Dialog.confirm({
+		confirmButtonText: '保留',
+		cancelButtonText: '不保留',
+		title: '',
+		message:
+				'保留此次编辑?',
+	})
+			.then((type) => {
+				console.log(type)
+				// on confirm
+			})
+			.catch((type) => {
+				// on cancel
+				if(type==='cancel'){
+					localStorage.removeItem('suploadPromiseTask')
+					router.replace({path:'/circleOfFriends'})
+				}
+			});
+}
+//预览图片
+const onClickPrevies=(db,dbs)=>{
+	const content=[]
+	fileList.value.map(item=>{
+		content.push(item.content)
+	})
+	previesImg.show=true
+	previesImg.index=dbs.index
+	previesImg.list=content
+
+}
+//切换图片的索引
+const onPreviesImgChange=index=>{
+	previesImg.index=index
+}
+const onPreviesImgClose=()=>{
+	previesImg.show=false
+	previesImg.index=0
+	previesImg.list=[]
+}
+const onBeforePreviesImgChange=(active)=>{
+	return
 }
 </script>
 <template>
+	<van-image-preview v-model:show="previesImg.show" :images="previesImg.list"
+										 overlay-class="overlay-class-abc"
+										 :startPosition="previesImg.index"
+										 :before-close="onBeforePreviesImgChange"
+										 @close="onPreviesImgClose"
+										 @change="onPreviesImgChange">
+		<template v-slot:index>第{{ previesImg.index+1 }}页</template>
+		<template v-slot:cover class="vcodes">
+			<p class="iconfont icon-shanchu"></p>
+			<p class="iconfont icon-guanbi" @click="onPreviesImgClose"></p>
+		</template>
+	</van-image-preview>
 	<van-nav-bar placeholder fixed left-arrow @click-left="onClickLeft">
 		<template #right>
 			<van-popover v-model:show="showPopover" >
@@ -76,21 +129,11 @@ const onClickLeft = () => {
 			<van-button type="success" size="mini">发布</van-button>
 		</template>
 	</van-nav-bar>
-	<Emoji  v-model:inputBox="inputBoxRef"/>
+	<Emoji  v-model:inputBox="sendText"/>
 	<van-cell-group inset>
-
-		<van-field
-				v-model="sendText"
-				rows="3"
-				autosize
-				:border="false"
-				clearable
-
-				type="textarea"
-				maxlength="288"
-				placeholder="这一刻的想法..."
-		/>
-		<van-uploader deletable  v-model="fileList" multiple  :max-count="9" :max-size="500 * 1024">
+		<van-uploader :deletable="false" :preview-full-image="false" v-model="fileList" multiple  :max-count="9" :max-size="500 * 1024"
+		@click-preview="onClickPrevies"
+		>
 		</van-uploader>
 	</van-cell-group>
 
@@ -109,5 +152,17 @@ const onClickLeft = () => {
 }
 /deep/ .van-uploader__preview{
 	margin: 1px;
+}
+.icon-shanchu,.icon-guanbi{
+	font-size: 20px;
+	color: #fff;
+	padding-right: 10px;
+}
+</style>
+<style>
+.van-image-preview__cover {
+	left: auto;
+	right: 20px;
+	display: flex;
 }
 </style>

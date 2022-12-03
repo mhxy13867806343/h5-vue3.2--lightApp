@@ -1,8 +1,8 @@
 <script setup>
+import{ref} from 'vue'
 import {useRouter} from 'vue-router'
 import { Toast } from 'vant';
-import {ref,onMounted} from 'vue'
-import { postUploads} from "@/api/user";
+const uploadFile=ref([])
 const router=useRouter()
 function getBase64(file) {
 	return new Promise((resolve, reject) => {
@@ -32,36 +32,28 @@ const fileJoin=file=>{
 const onBeforeRead=file=>{
 	const {id:userId}=JSON.parse(localStorage.getItem('user'))
 	const uploadPromiseTask = [] //定义上传的promise任务栈
-	let result =false
-	if (file.length){
+	if (uploadFile.value.length){
 
-		file.map(item=>{
-			result=fileJoin(item.file)
-			if (result){
-				uploadPromiseTask.unshift(item.file) //push进每
-			}
-		 }
-		)
-	}else{
-		result=fileJoin(file.file)
-		if (result){
-			uploadPromiseTask.unshift(file.file) //push进每
-		}
+		uploadFile.value.map(item=> {
+			uploadPromiseTask.unshift({
+				content:item.content,
+				"status": item.status,
+				"message":item.message,
+				file:{
+					type:item.file.type,
+					webkitRelativePath:item.file.webkitRelativePath,
+					size:item.file.size,
+					name:item.file.name,
+					lastModified:item.file.lastModified,
+					lastModifiedDate:item.file.lastModifiedDate,
+				}
+			})
+		})
 	}
 	if(uploadPromiseTask.length){
-		const formData=new FormData()
-		uploadPromiseTask.map((item,index)=>{
-			formData.append('files',item)
-
-		})
-		formData.append('id',userId)
-		postUploads(formData).then(res=>{
-			const {code}=res
-			if(code===200){
-				router.push({
-					path:'/circlesend'
-				})
-			}
+		localStorage.setItem('suploadPromiseTask',JSON.stringify(uploadPromiseTask))
+		router.push({
+			path:'/circlesend'
 		})
 	}else{
 		Toast('上传失败！')
@@ -75,6 +67,7 @@ const onBeforeRead=file=>{
 			 <div class="v-right">
 				 <p class="iconfont icon-shuaxin"></p>
 				 <van-uploader multiple   max-count="9"
+											 v-model="uploadFile"
 											 :after-read="onBeforeRead"
 				 >
 				 <p class="iconfont icon-xiangji"></p>
