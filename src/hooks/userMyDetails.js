@@ -20,7 +20,6 @@ export default ()=>{
         informationRef.nickname=myDetail.value.nickname
         informationRef.username=myDetail.value.username
         informationRef.avatar=myDetail.value.avatar
-        console.log(22,host1+myDetail.value.avatar)
         informationRef.fileList=[
           {
             url: host1+myDetail.value.avatar,

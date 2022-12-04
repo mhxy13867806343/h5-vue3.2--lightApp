@@ -97,6 +97,12 @@ const routes = [
     path: '/circlesend',
     name: 'circlesend',
     component : () => import(/* webpackChunkName: "about" */ '../views/CircleOfFriendSend.vue')
+  },
+  {
+
+    path: '/minrecording',
+    name: 'minrecording',
+    component : () => import(/* webpackChunkName: "about" */ '../views/Recording.vue')
   }
 ]
 
