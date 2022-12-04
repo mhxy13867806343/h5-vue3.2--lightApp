@@ -1,12 +1,25 @@
 <script setup>
-import {ref}from 'vue'
+import {useRouter}from 'vue-router'
+import {getDictChildList} from '@/api/dict'
+import {ref,onMounted}from 'vue'
 const indexList=ref([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 const showPopover=ref(false)
-const actionsList=ref([
-	{ text: '添加好友',icon:'iconfont icon-fabu' },
-])
+const actionsList=ref([])
+const router = useRouter()
+onMounted(()=>{
+	getDictChildList('contacts').then(res=>{
+		res.data.map(item=>{
+			item.router=item.key_url
+			item.text=item.key_name
+			item.icon=item.key_args
+		})
+		actionsList.value=res.data
+	})
+})
 const onActionsSelect=item=>{
-
+	if(item.router){
+		router.push(item.router)
+	}
 }
 </script>
 <template>
