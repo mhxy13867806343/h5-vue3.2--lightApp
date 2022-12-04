@@ -18,6 +18,11 @@ const routes = [
         component:  () => import(/* webpackChunkName: "about" */ '../views/Hot.vue')
       },
       {
+        path: '/contacts',
+        name: 'contacts',
+        component:  () => import(/* webpackChunkName: "about" */ '../views/Contacts.vue')
+      },
+      {
         path: '/my',
         name: 'my',
         // route level code-splitting
@@ -103,6 +108,18 @@ const routes = [
     path: '/minrecording',
     name: 'minrecording',
     component : () => import(/* webpackChunkName: "about" */ '../views/Recording.vue')
+  },
+  {
+
+    path: '/girlfriend',
+    name: 'girlfriend',
+    component : () => import(/* webpackChunkName: "about" */ '../views/Girlfriend.vue')
+  },
+  {
+
+    path: '/addContacts',
+    name: 'addContacts',
+    component : () => import(/* webpackChunkName: "about" */ '../views/AddContacts.vue')
   }
 ]
 

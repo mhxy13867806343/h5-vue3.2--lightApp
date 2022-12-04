@@ -13,7 +13,7 @@ const content=ref("“当前全国疫情总体呈较快发展态势，疫情波�
 		"\t\t\t\t\t在国务院联防联控机制新闻发布会上说，二十条优\n" +
 		"\t\t\t\t\t化措施中的每条措施都有充分的科学依据和证据支撑，要坚持第九版防控方案，落实二十条优化措施。")
 const contentIf=ref(false)
-const creationTime=ref('2022-12-4 17:49:23')
+const creationTime=ref()
 onMounted(()=>{
 	const _suploadPromiseTask=localStorage.getItem('suploadPromiseTask')
 	if(_suploadPromiseTask){
@@ -39,6 +39,9 @@ onMounted(()=>{
 
 		}
 	}
+	setInterval(()=>{
+		contentIfChangeComputed()
+	},1000)
 
 })
 const onClickAll=()=>{
@@ -87,14 +90,17 @@ const onBeforeRead=file=>{
 			})
 		}
 }
-const contentIfChangeComputed=computed(()=>{
-	const days=moment().diff(moment(creationTime.value), 'days')
+const contentIfChangeComputed=()=>{
+	const _t='2022-12-4 18:11:23'
+	const days=moment().diff(moment(_t), 'days')
+	let time=''
 	if(days<=365){
-		return moment(creationTime.value).fromNow()
+		time=moment(_t).fromNow()
 	}if(days>365){
-		return moment(creationTime.value).format('YYYY-MM-DD')
+		time=moment(_t).format('YYYY-MM-DD')
 	}
-})
+	creationTime.value=time
+}
 </script>
 <template>
 	<van-nav-bar placeholder fixed>
@@ -139,7 +145,7 @@ const contentIfChangeComputed=computed(()=>{
 					</li>
 				</ul>
 				<p class="time">
-					发布于:{{contentIfChangeComputed}}
+					发布于:{{creationTime}}
 				</p>
 			</div>
 		</li>
