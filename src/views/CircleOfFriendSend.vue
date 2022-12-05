@@ -1,4 +1,5 @@
 <script setup>
+import {postCsave,postUploads}from '@/api/user'
 import useUpload from "@/hooks/useUpload";
 const {onAfterRead}=useUpload()
 import {getUploads}from '@/api/user'
@@ -21,8 +22,8 @@ const previesImg=reactive({
 	list:[]
 })
 const actionsList=ref([
-	{ key_name: '公开',key_value:1 },
-	{ key_name: '私人',key_value:2 },
+	{ key_name: '公开',key_value:0 },
+	{ key_name: '私人',key_value:1 },
 ])
 onMounted(async ()=>{
 	activeText.value=actionsList.value[0].key_name
@@ -153,15 +154,74 @@ const onImgDelete=(file,delval)=>{
 	localStorage.setItem('suploadPromiseTask',JSON.stringify(_arr))
 	getSuploadPromiseTask()
 }
-const onBeforePreviesImgChange=(active)=>{
-	return
-}
 const onSendText=()=>{
 	const text=sendTextLen.value
-	console.log(text,sendText.value)
 	if(text>1000){
 		Toast(`动态内容达到了${text},请减少到1000长度以内,离1000还有${text-1000}个长度`)
 		return
+	}
+	addJoin2()
+
+}
+const addJoin1=()=>{
+
+	const data={
+		public_type:checkedRef.value,
+		c_content:sendText.value,
+	}
+	Toast.loading({
+		message: '提交中...',
+		duration: 0,
+		forbidClick: true,
+		loadingType: 'spinner',
+	});
+	postCsave(data).then(res=>{
+		const {code,msg}=res
+		if(code===200){
+			Toast.success(msg)
+			localStorage.removeItem('suploadPromiseTask')
+			router.push({
+				path:'/circleOfFriends'
+			})
+		}else{
+			Toast.fail(msg)
+		}
+	})
+}
+const addJoin2=()=>{
+	getItemUploadPromiseTaskLocalStorage()
+}
+
+function  base64toBlob(dataurl, filename) {
+	var arr = dataurl.split(','),
+			mime = arr[0].match(/:(.*?);/)[1],
+			bstr = atob(arr[1]),
+			n = bstr.length,
+			u8arr = new Uint8Array(n);
+	while (n--) {
+		u8arr[n] = bstr.charCodeAt(n);
+	}
+	return new File([u8arr], filename, { type: mime });
+
+}
+const getItemUploadPromiseTaskLocalStorage=()=>{
+	const {id}=JSON.parse(localStorage.getItem('user'))
+	const uploadPromiseTask=JSON.parse(localStorage.getItem('suploadPromiseTask'))
+	if(uploadPromiseTask.length){
+		const formData=new FormData()
+		uploadPromiseTask.map((item,index)=>{
+			formData.append('files',base64toBlob(item.content,item.file.name))
+		})
+		formData.append('id',id)
+		postUploads(formData).then(res=>{
+			const {code}=res
+			if(code===200){
+				addJoin1()
+
+			}
+		})
+	}else{
+		Toast('上传失败！')
 	}
 }
 const onInputBoxClear=()=>{

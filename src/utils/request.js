@@ -3,7 +3,7 @@ import router from '../router'
 import { Toast } from 'vant'
 const service = axios.create({
   baseURL: process.env.VUE_APP_WECHAT_AUTH_URL, // url = base url + request url
-  withCredentials: true, // send cookies when cross-domain requests
+  withCredentials: false, // send cookies when cross-domain requests
   timeout: 5000, // request timeout
 })
 service.defaults.headers.post['Content-Type'] = 'multipart/form-data'

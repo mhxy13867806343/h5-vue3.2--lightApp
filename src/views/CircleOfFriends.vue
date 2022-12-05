@@ -1,19 +1,20 @@
 <script setup>
+import useList from "@/hooks/useList";
+import {getPyclist}from '@/api/user'
 import moment from 'moment'
+const { paramsRef, onRefresh, ongetList, onClearRead }=useList()
 moment.locale('zh-cn')
 import useUpload from "@/hooks/useUpload";
 const {onAfterRead}=useUpload()
-import{ref,onMounted,computed} from 'vue'
+import {ref, onMounted, computed, getCurrentInstance} from 'vue'
 import {useRouter} from 'vue-router'
 import { Dialog,Toast } from 'vant';
-const uploadFile=ref([])
+
+const host1=getCurrentInstance ().appContext.config.globalProperties.$host1
+const uploadFile=ref([])//临时使用的上传
 const router=useRouter()
-const content=ref("“当前全国疫情总体呈较快发展态势，疫情波及面广，部分地方出现了疫情规模性反弹的风险，\n" +
-		"\t\t\t\t\t一些地方面临抗疫三年以来最复杂、最严峻的形势。”国家疾控局监督一司司长程有全11月29日\n" +
-		"\t\t\t\t\t在国务院联防联控机制新闻发布会上说，二十条优\n" +
-		"\t\t\t\t\t化措施中的每条措施都有充分的科学依据和证据支撑，要坚持第九版防控方案，落实二十条优化措施。")
 const contentIf=ref(false)
-const creationTime=ref()
+const creationTime=ref([])
 onMounted(()=>{
 	const _suploadPromiseTask=localStorage.getItem('suploadPromiseTask')
 	if(_suploadPromiseTask){
@@ -43,6 +44,28 @@ onMounted(()=>{
 		contentIfChangeComputed()
 	},1000)
 
+})
+onMounted(()=>{
+	ongetList(getPyclist,{})
+
+})
+const onLoad=()=>{
+	paramsRef.page++
+	ongetList(getPyclist,{})
+
+}
+const c_imagesCom=computed(()=>{
+
+	return  paramsRef.list.map(item=>{
+		if(item.c_images){
+			const split = item.c_images.split(',')
+			if(split?.length){
+				return split.map(item=>{
+					return host1+item
+				})
+			}
+		}
+	})
 })
 const onClickAll=()=>{
 	contentIf.value=!contentIf.value
@@ -91,15 +114,19 @@ const onBeforeRead=file=>{
 		}
 }
 const contentIfChangeComputed=()=>{
-	const _t='2022-12-4 18:11:23'
-	const days=moment().diff(moment(_t), 'days')
-	let time=''
-	if(days<=365){
-		time=moment(_t).fromNow()
-	}if(days>365){
-		time=moment(_t).format('YYYY-MM-DD')
-	}
-	creationTime.value=time
+	return paramsRef.list.forEach(item=>{
+		const {c_create_time}=item
+		let _t=c_create_time*1000
+		const days=moment().diff(moment(_t), 'days')
+		let time=''
+		if(days<=365){
+			time=moment(_t).fromNow()
+		}if(days>365){
+			time=moment(_t).format('YYYY-MM-DD')
+		}
+		creationTime.value.push(time)
+	})
+
 }
 </script>
 <template>
@@ -116,40 +143,49 @@ const contentIfChangeComputed=()=>{
 			 </div>
 		</template>
 	</van-nav-bar>
-	<ul>
-		<li class="li1">
-			<div class="left">
-				<van-image
-						width="50"
-						height="50"
-						src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
-				/>
-			</div>
-			<div class="right">
-				<p class="nickname">
-					发布者:
-					<span>abcdef</span>
-				</p>
-				<div class="content">
-					<p>{{contentIf?content:textCapitalize(content)}}</p>
-					<span  @click="onClickAll" v-if="content.length>50">{{
-						contentIf?'收起':'全文'}}</span>
+	<van-list
+			:immediate-check="false"
+			v-model:loading="paramsRef.isLoading"
+			:finished="paramsRef.isFinished"
+			finished-text="没有更多了"
+			@load="onLoad"
+	>
+		<ul>
+			<li class="li1" v-for="(item,index) in  paramsRef.list" :key="index">
+				<div class="left">
+					<van-image
+							width="50"
+							height="50"
+							:src="`${host1}${item.c_avatar}`"
+					/>
 				</div>
-				<ul class="ul1">
-					<li v-for="(item,index) in 9" :key="index">
-						<van-image
-								width="100"
-								height="100"
-								src="https://fastly.jsdelivr.net/npm/@vant/assets/cat.jpeg"
-						/>
-					</li>
-				</ul>
-				<p class="time">
-					发布于:{{creationTime}}
-				</p>
-			</div>
-		</li>
-	</ul>
+				<div class="right">
+					<p class="nickname">
+						发布者:{{index+1}}
+						<span>{{item.c_name}}</span>
+					</p>
+					<div class="content">
+						<p v-html="contentIf?item.c_content:textCapitalize(item.c_content)"></p>
+						<span  @click="onClickAll" v-if="item.c_content.length>50">{{
+								contentIf?'收起':'全文'}}</span>
+					</div>
+					<ul class="ul1">
+						<li v-for="(item,index) in c_imagesCom&&c_imagesCom[index]" :key="index">
+							<van-image
+									width="100"
+									height="100"
+									:src="item"
+							/>
+						</li>
+					</ul>
+					<p class="time">
+						发布于:{{creationTime[index]}}
+					</p>
+				</div>
+			</li>
+		</ul>
+	</van-list>
+
 </template>
 
 <style scoped>
@@ -172,6 +208,7 @@ ul .li1{
 }
 .right{
 	margin-left: 8px;
+	flex:1;
 }
 .nickname{
 	font-size:12px;
@@ -185,7 +222,7 @@ ul .li1{
 }
 .ul1{
 	display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 	flex-wrap: wrap;
 	margin:5px 0;

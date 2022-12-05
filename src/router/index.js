@@ -129,6 +129,9 @@ const router = createRouter({
 })
 router.beforeEach((to,from,next)=>{
   const token=localStorage.getItem('token')
+  if(to.path==='/home' ||to.path==='/hot'){
+    next()
+  }
   if(to.path==='/login'||to.path==='/opinion'||to.path==='/versionNumber'||to.path==='/zc'){
     if(!token) {
       next ()

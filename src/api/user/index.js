@@ -44,6 +44,13 @@ export const postUploads= data => {
     data, method: 'post'
   })
 }
+//保存用户朋友圈内容
+export const postCsave= data => {
+  return request({
+    url: 'users/csave',
+    data, method: 'post'
+  })
+}
 //获取多张图片
 export const getUploads= params => {
   return request({
@@ -121,5 +128,12 @@ export const putUsersignature= data => {
     url: 'users/signature',
     data,
     method: 'put'
+  })
+}
+//查看所有的朋友圈内容
+export const getPyclist= params => {
+  return request({
+    url: 'users/pyclist',
+    params,
   })
 }
