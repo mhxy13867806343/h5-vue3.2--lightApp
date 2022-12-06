@@ -161,7 +161,7 @@ const contentIfChangeComputed=()=>{
 				</div>
 				<div class="right">
 					<p class="nickname">
-						发布者:{{index+1}}
+						发布者:
 						<span>{{item.c_name}}</span>
 					</p>
 					<div class="content">
@@ -238,6 +238,7 @@ p{
 	font-size: 15px;
 	color: #666;
 	font-weight: 700;
+	word-break: break-all;
 }
 .content span{
 	font-weight: 400;
