@@ -1,16 +1,17 @@
 import request from '@/utils/request'
-//获取用户是否签到过
-export const getUsersPoint = params => {
+//获取用户签到列表
+export const getSigninList= params => {
   return request({
-    url: 'users/point',
+    url: 'users/signin',
     params,
   })
 }
-//保存用户积分
-export const postUsersPoint = data => {
+
+//用户签到
+export const postUsersPoint = params => {
   return request({
-    url: 'users/point',
-    data,
+    url: 'users/signin',
+    params,
     method: 'post',
   })
 }

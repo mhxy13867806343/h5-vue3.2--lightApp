@@ -1,25 +1,21 @@
 <script setup>
-import {getUsersPoint,postUsersPoint}from '@/api/point'
+import {getSigninList,postUsersPoint}from '@/api/point'
 import {ref,onMounted,reactive,computed} from 'vue'
 import moment from 'moment'
+import {Notify, Toast} from "vant";
 const calendarReactive =reactive({
   start: new Date(),
   end:new Date(),
   defaultDate: new Date(),
   list:[],
-  data:{
-    "user_id": 0,
-    "points": 0,
-    "is_check": 0,
-    "check_time": 0,
-    "check_in_days": 0,
-    "now_days": 0,
-  },
+	isCheck:0,
+	author_sigi_count:0,
+	sigi_count:0,
   potinList:[]
 })
 const posShow=ref(false)//积分规则
 onMounted(()=>{
-  getUsersPoint1()
+	getSigninList1()
   calndarSplit()
 })
 const calndarSplit=()=>{
@@ -30,13 +26,13 @@ const calndarSplit=()=>{
   calendarReactive.end=end
   calendarReactive.defaultDate=splitData(moment())
 }
-const getUsersPoint1=()=>{
-  getUsersPoint().then(res=>{
-    if(res.data){
-      calendarReactive.data=res.data.data
-      calendarReactive.potinList=res.data.list
-    }
-
+const getSigninList1=()=>{
+	getSigninList().then(res=>{
+		const {code,msg,data:{list,isCheck,author_sigi_count,sigi_count}}=res
+		calendarReactive.list=list
+		calendarReactive.isCheck=isCheck
+		calendarReactive.author_sigi_count=author_sigi_count
+		calendarReactive.sigi_count=sigi_count
   })
 }
 const splitData=data=>{
@@ -47,30 +43,40 @@ const onClickPotion=()=>{
   posShow.value=true
 }
 const onClickSave=()=>{
-  postUsersPoint({time:moment(calendarReactive.defaultDate).valueOf()}).then(res=>{
-    const {code}=res
-    if(code===200){
-      getUsersPoint1()
-    }
+	const   offset=Number(moment(calendarReactive.defaultDate).format('DD'))
+	Toast.loading({
+		message: '签到中...',
+		forbidClick: true,
+		loadingType: 'spinner',
+		duration: 0,
+	});
+  postUsersPoint({offset}).then(res=>{
+    const {code,msg}=res
+		if(code===200) {
+			Toast.success(msg)
+			getSigninList1()
+		}
   })
 }
 const formatter = (day) => {
-  const month = day.date.getMonth();
+  const month = day.date.getMonth()+1;
   const date = day.date.getDate();
   const MM=+moment().format('MM')
-  const potinList=calendarReactive?.potinList||[]
+  const potinList=calendarReactive?.list||[]
   const list =potinList.map(item=>{
     return {
       time:moment(item.check_time*1000).format('yyyy-MM-DD'),
       checked:item.is_Check?true:false
     }
   })
-  const vm=moment(day.date).add(-1, 'months').format('YYYY-MM-DD')
-  if (month === MM) {
+  const vm=+moment(day.date).add(-1, 'months').format('MM')
+  if (vm === MM) {
+
     list.map(item=>{
       const temp=+moment(item.time).format("DD")
       if(item.checked){
-        if(vm===item.time){
+				const _vm=moment(day.date).add(-1, 'months').format('YYYY-MM-DD')
+        if(_vm===item.time){
           day.bottomInfo='true'
           day.className='day-classNames'
         }
@@ -92,9 +98,10 @@ const formatter = (day) => {
     </van-cell>
   </van-cell-group>
   <div class="top justify-center">
-    <p>当前签到<span class="span-text span-text-active">{{calendarReactive.data?.now_days||0}}</span>天</p>
-    <p>已连续签到<span class="span-text">{{calendarReactive.data?.check_in_days||0}}</span>天</p>
-    <p>获取积分<span class="span-text">{{calendarReactive.data?.points||0}}</span>分</p>
+
+    <p>当前签到<span class="span-text span-text-active">{{calendarReactive.sigi_count||0}}</span>天</p>
+    <p>已连续签到<span class="span-text">{{calendarReactive.author_sigi_count||0}}</span>天</p>
+    <p v-if="0">获取积分<span class="span-text">{{calendarReactive.data?.points||0}}</span>分</p>
   </div>
 </div>
   <van-calendar
@@ -117,9 +124,9 @@ const formatter = (day) => {
   </van-calendar>
   <div class="justify-center img-centered-1">
     <van-button hairline type="primary" block round @click="onClickSave"
-    :disabled="calendarReactive.data?.is_Check"
+    :disabled="calendarReactive.isCheck"
     >
-      {{calendarReactive.data?.is_Check?'已签到':'签到'}}
+      {{calendarReactive.isCheck?'已签到':'签到'}}
     </van-button>
   </div>
   <van-popup  v-model:show="posShow" position="center" :style="{width:'80%' }" round closeable >
@@ -169,9 +176,12 @@ const formatter = (day) => {
   position: absolute;
   bottom: 0px;
   left: 0;
-  display: block;
   transform: translateX(-100%);
   white-space: nowrap;
-  color: #1e80ff;
+  color: #000;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 </style>

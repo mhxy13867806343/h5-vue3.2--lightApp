@@ -52,6 +52,9 @@ onMounted(()=>{
 const onLoad=()=>{
 	paramsRef.page++
 	ongetList(getPyclist,{})
+	setInterval(()=>{
+		contentIfChangeComputed()
+	},1000)
 
 }
 const c_imagesCom=computed(()=>{
@@ -128,12 +131,23 @@ const contentIfChangeComputed=()=>{
 	})
 
 }
+const onRefresh1=()=>{
+	onRefresh(getPyclist,{})
+	setInterval(()=>{
+		contentIfChangeComputed()
+	},1000)
+
+}
 </script>
 <template>
-	<van-nav-bar placeholder fixed>
+	<van-nav-bar placeholder fixed  title="朋友圈"
+							 left-text="返回"
+							 left-arrow
+							 @click-left="$router.replace({path:'/my'})"
+	>
 		<template #right>
 			 <div class="v-right">
-				 <p class="iconfont icon-shuaxin"></p>
+				 <p class="iconfont icon-shuaxin" @click="onRefresh1"></p>
 				 <van-uploader multiple   max-count="9"
 											 v-model="uploadFile"
 											 :after-read="onBeforeRead"
