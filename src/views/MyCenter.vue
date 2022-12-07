@@ -24,7 +24,7 @@ const calndarSplit=()=>{
   const end= splitData(tempm.endOf('month'))
   calendarReactive.start=start
   calendarReactive.end=end
-  calendarReactive.defaultDate=splitData(moment())
+  calendarReactive.defaultDate=splitData(moment().subtract(1, 'months'))
 }
 const getSigninList1=()=>{
 	getSigninList().then(res=>{
@@ -59,9 +59,8 @@ const onClickSave=()=>{
   })
 }
 const formatter = (day) => {
-  const month = day.date.getMonth()+1;
-  const date = day.date.getDate();
   const MM=+moment().format('MM')
+	const month = day.date.getMonth() + 1;
   const potinList=calendarReactive?.list||[]
   const list =potinList.map(item=>{
     return {
@@ -69,22 +68,23 @@ const formatter = (day) => {
       checked:item.is_Check?true:false
     }
   })
-  const vm=+moment(day.date).add(-1, 'months').format('MM')
-  if (vm === MM) {
+  const vm=+moment(day.date).format('MM')
+  if (vm === month) {
 
     list.map(item=>{
-      const temp=+moment(item.time).format("DD")
       if(item.checked){
-				const _vm=moment(day.date).add(-1, 'months').format('YYYY-MM-DD')
+				const _vm=moment(day.date).subtract(0, 'months').format('YYYY-MM-DD')
         if(_vm===item.time){
           day.bottomInfo='true'
           day.className='day-classNames'
         }
+
       }
 
     })
   }
-  return day;
+
+  return day
 };
 
 </script>
@@ -105,8 +105,7 @@ const formatter = (day) => {
   </div>
 </div>
   <van-calendar
-      :formatter="formatter"
-      :min-date="calendarReactive.start"
+			:formatter="formatter"
       :max-date="calendarReactive.end" readonly
       :default-date="calendarReactive.defaultDate"
       :poppable="false"
