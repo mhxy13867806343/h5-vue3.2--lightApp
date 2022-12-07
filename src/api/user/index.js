@@ -137,3 +137,17 @@ export const getPyclist= params => {
     params,
   })
 }
+//热门用户id
+export const getHotid= params => {
+  return request({
+    url: 'users/hotid',
+    params,
+  })
+}
+//热门用户id列表
+export const getHotidList= params => {
+  return request({
+    url: 'users/hotidlist',
+    params,
+  })
+}
