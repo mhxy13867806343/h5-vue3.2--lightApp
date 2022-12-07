@@ -120,6 +120,23 @@ const routes = [
     path: '/addContacts',
     name: 'addContacts',
     component : () => import(/* webpackChunkName: "about" */ '../views/AddContacts.vue')
+  },
+  {
+
+    path: '/logotype',
+    name: 'logotype',
+    component : () => import(/* webpackChunkName: "about" */ '../views/Logotype.vue')
+  },
+  {
+
+    path: '/set',
+    name: 'set',
+    component : () => import(/* webpackChunkName: "about" */ '../views/MySet.vue')
+  },
+  {
+    path: '/zcNum',
+    name: 'zcNum',
+    component : () => import(/* webpackChunkName: "about" */ '../views/SelectUdNum.vue')
   }
 ]
 
