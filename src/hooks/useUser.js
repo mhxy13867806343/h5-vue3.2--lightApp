@@ -48,7 +48,7 @@ export default ()=>{
           const {data,token}=res
           localStorage.setItem('token',token)
           localStorage.setItem('user',JSON.stringify(data))
-          if(data.user_type_num){
+          if(data.user_type_num!=='0'){
             router.push('/home')
           }else{
             router.push(`/zcNum?id=${data.id}`)

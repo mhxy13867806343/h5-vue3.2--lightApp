@@ -17,7 +17,6 @@ service.interceptors.request.use(
     return config
   },
   error => {
-
     Toast.clear()
     // do something with request error
       return Promise.reject(error)

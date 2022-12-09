@@ -9,6 +9,7 @@ export default ()=>{
     nickname:'',
     username:'',
     avatar:'',
+    user_type_num:"",
     fileList:[]
   })
   const host1=getCurrentInstance ().appContext.config.globalProperties.$host1
@@ -20,6 +21,7 @@ export default ()=>{
         informationRef.nickname=myDetail.value.nickname
         informationRef.username=myDetail.value.username
         informationRef.avatar=myDetail.value.avatar
+        informationRef.user_type_num=myDetail.value.user_type_num
         informationRef.fileList=[
           {
             url: host1+myDetail.value.avatar,
@@ -66,7 +68,7 @@ export default ()=>{
     const toast = Toast.loading({
       duration: 0,
       forbidClick: true,
-      message: '倒计时 3 秒',
+      message: '提交中...',
     });
     postUserSave(formData).then(res=>{
       Toast.clear();

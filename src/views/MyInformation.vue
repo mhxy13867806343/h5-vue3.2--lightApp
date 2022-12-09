@@ -14,6 +14,7 @@ const {informationRef,onBeforeRead,onAfterRead,onClickSave}=userMyDetails()
     <!-- 输入任意文本 -->
     <van-field disabled v-model="informationRef.username" label="用户名" clearable colon center placeholder="请输入用户名"/>
     <van-field label-class="informationRef" v-model="informationRef.nickname" label="昵称" clearable colon center placeholder="请输入昵称"/>
+    <van-field disabled label-class="informationRef" v-model="informationRef.user_type_num" label="用户唯一编号" clearable colon center placeholder="请输入用户唯一编号"/>
     <van-cell title-class="informationRef" title="更多信息展示" is-link to="myiMore" />
   </van-cell-group>
   <div class="justify-center img-centered-1">

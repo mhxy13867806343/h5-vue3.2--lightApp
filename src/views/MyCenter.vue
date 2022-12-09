@@ -65,23 +65,32 @@ const formatter = (day) => {
   const list =potinList.map(item=>{
     return {
       time:moment(item.check_time*1000).format('yyyy-MM-DD'),
-      checked:item.is_Check?true:false
-    }
+      checked:item.is_Check?true:false,
+			is_not_sign:!item.check_time?true:false,
+		}
   })
   const vm=+moment(day.date).format('MM')
   if (vm === month) {
-
-    list.map(item=>{
-      if(item.checked){
+		console.log(list,day)
+		if(list.length){
+			list.map(item=>{
 				const _vm=moment(day.date).subtract(0, 'months').format('YYYY-MM-DD')
-        if(_vm===item.time){
-          day.bottomInfo='true'
-          day.className='day-classNames'
-        }
+				if(item.checked){
+					if(_vm===item.time){
+						day.bottomInfo='true'
+						day.className='day-classNames'
+					}
 
-      }
+				}else{
+					if(_vm===item.time){
+						day.bottomInfo='not'
+						day.className='day-classNames1'
+					}
+				}
 
-    })
+			})
+		}
+
   }
 
   return day
@@ -119,6 +128,7 @@ const formatter = (day) => {
 
       <van-icon name="success" color="#ff7d00"  v-if="day.bottomInfo==='true'" size="14px" />
       <span  v-if="day.bottomInfo==='true'" class="day-oks">已签到</span>
+      <span  v-if="day.bottomInfo==='not'" class="day-oks">未签到</span>
     </template>
   </van-calendar>
   <div class="justify-center img-centered-1">
@@ -161,9 +171,15 @@ const formatter = (day) => {
 /deep/.van-calendar__header-subtitle{
   display: none;
 }
+/deep/ .day-classNames,/deep/ .day-classNames1{
+	position: relative;
+}
 /deep/ .day-classNames{
   background-color: #e8f3ff;
-  position: relative;
+
+}
+/deep/ .day-classNames1{
+	background-color: #64854c;
 }
 /deep/ .van-calendar__bottom-info{
   position: absolute;
@@ -173,9 +189,9 @@ const formatter = (day) => {
 }
 /deep/ .van-calendar__bottom-info .day-oks{
   position: absolute;
-  bottom: 0px;
-  left: 0;
-  transform: translateX(-100%);
+	bottom: 0;
+	left: -25px;
+	transform: translate(50%, 50%);
   white-space: nowrap;
   color: #000;
 	width: 100%;
