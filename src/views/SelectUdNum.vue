@@ -1,5 +1,5 @@
 <script setup>
-import {getHotid,getHotidList,postToken,postUserSave} from '@/api/user'
+import {getHotid,getHotidList,postUserSave} from '@/api/user'
 import {Dialog, Toast} from 'vant';
 import {useRouter}from 'vue-router'
 import {ref, onMounted, onUpdated} from 'vue'
@@ -12,15 +12,16 @@ const hotList=ref([])//热门搜索列表
 const hotIndex=ref(-1) // 热门搜索的索引
 const router=useRouter()
 onMounted(()=>{
-	postToken().then(res=>{
-		if(res.code===200){
-			user.value=res.data
-			getHotid().then(res=>{
-				hotListId.value=res.data
-			})
-			getHotidList1()
-		}
+	user.value=JSON.parse(localStorage.getItem('user'))
+	if(user.value.user_type_num!=='0'){
+		Toast('您已有用户唯一标识,不用请求啦')
+		router.push('/home')
+		return
+	}
+	getHotid().then(res=>{
+		hotListId.value=res.data
 	})
+	getHotidList1()
 
 })
 const getHotidList1=({current=1}={current:1})=>{
@@ -39,12 +40,17 @@ const onPaginationChange=(val)=>{
 	hotList.value=[]
 	getHotidList1({current:val})
 }
-const onClearSearch=()=>{
+const onClearSearch=(val)=>{
 	hotList.value=[]
 	hotIndex.value=-1
+	search.value=val
 	getHotidList1({current:1})
 }
 const onSelectHotUserId=({n_type_num,n_is_delte,n_is_usage})=>{
+	if(user.value.user_type_num!=='0'){
+		Toast('您已有用户唯一标识,不用请求啦')
+		return
+	}
 	if(n_is_delte===1){
 		Toast('该用户标识已被删除，请重新选择')
 		return
@@ -99,6 +105,7 @@ const onSelectHotUserId=({n_type_num,n_is_delte,n_is_usage})=>{
 								label="搜    索："
 								clearable  background="#4fc08d"
 								maxlength="15" show-action
+								@search="onClearSearch"
 								@clear="onClearSearch('')"
 								@cancel="onClearSearch('')"
 		/>
@@ -117,7 +124,11 @@ const onSelectHotUserId=({n_type_num,n_is_delte,n_is_usage})=>{
 		<van-cell title=" " center :value="`共搜索到${hotList.length}个编号`"></van-cell>
 		<van-space wrap :size="10" align="start">
 			<p v-for="(a,b) in hotList" :key="b" class="hot-list-item"
-			@click="onSelectHotUserId(a)">{{a.n_type_num}}</p>
+			@click="onSelectHotUserId(a)">
+				{{a.n_type_num}}
+			<span class="dot" v-if="a.n_is_usage===1"></span>
+			<span class="del-disabled" v-if="a.n_is_delte===1"></span>
+			</p>
 
 		</van-space>
 		<p v-if="!hotList.length" class="not-hot-id">
@@ -182,6 +193,7 @@ const onSelectHotUserId=({n_type_num,n_is_delte,n_is_usage})=>{
 /deep/ .van-space-item{
 	background-color: #f6f4e8;
 	padding: 4px;
+	position:relative;
 }
 .van-space-item-active{
 	border-color: #7c7c7c #c3c3c3 #ddd;
@@ -213,5 +225,25 @@ const onSelectHotUserId=({n_type_num,n_is_delte,n_is_usage})=>{
 	background-color: #f6f4e8;
 	padding: 12px;
 	border-radius: 5px;
+}
+.dot{
+	width: var(--van-badge-dot-size);
+	min-width: 0;
+	height: var(--van-badge-dot-size);
+	background: var(--van-badge-dot-color);
+	border-radius: 100%;
+	border: none;
+	padding: 0;
+
+}
+.dot,.del-disabled{
+	position:absolute;
+	top:0;
+	right:0;
+}
+.del-disabled {
+	padding: var(--van-address-list-item-padding);
+	background-color: var(--van-background-color-light);
+	border-radius: var(--van-border-radius-lg);
 }
 </style>

@@ -28,11 +28,11 @@ const calndarSplit=()=>{
 }
 const getSigninList1=()=>{
 	getSigninList().then(res=>{
-		const {code,msg,data:{list,isCheck,author_sigi_count,sigi_count}}=res
+		const {code,msg,data:{list,is_Check,check_In_Days,now_days}}=res
 		calendarReactive.list=list
-		calendarReactive.isCheck=isCheck
-		calendarReactive.author_sigi_count=author_sigi_count
-		calendarReactive.sigi_count=sigi_count
+		calendarReactive.isCheck=is_Check
+		calendarReactive.author_sigi_count=check_In_Days
+		calendarReactive.sigi_count=now_days
   })
 }
 const splitData=data=>{
@@ -71,7 +71,6 @@ const formatter = (day) => {
   })
   const vm=+moment(day.date).format('MM')
   if (vm === month) {
-		console.log(list,day)
 		if(list.length){
 			list.map(item=>{
 				const _vm=moment(day.date).subtract(0, 'months').format('YYYY-MM-DD')

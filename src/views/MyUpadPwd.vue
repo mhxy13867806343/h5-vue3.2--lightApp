@@ -73,12 +73,15 @@ const getPostToken=()=>{
       informationRef.pwdCount= informationRef.user .pwdCount
       informationRef.username=informationRef.user.username
       informationRef.nickname=informationRef.user.nickname
-      const notMessage=`离下次时间:${moment(informationRef.user.times).format('YYYY-MM-DD HH:mm:ss')},
+			if(!informationRef.pwdCount){
+				const notMessage=`离下次时间:${moment(informationRef.user.times).format('YYYY-MM-DD HH:mm:ss')},
         才可以进行修改密码`
-      Notify({
+				Notify({
 
-        position:'bottom',
-        duration:4000, type: 'primary', message: notMessage });
+					position:'bottom',
+					duration:4000, type: 'primary', message: notMessage });
+			}
+
     }
   })
 }
