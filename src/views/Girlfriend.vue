@@ -1,17 +1,34 @@
 <script setup>
-
+import {ref,defineProps} from "vue";
+import {useRoute} from 'vue-router'
+const route=useRoute()
+const props = defineProps({
+	title:{
+		type:String,
+		default:'机器人'
+	}
+})
 </script>
 <template>
 	<div class="wrapper">
 		<div class="top">
-			<van-nav-bar title="聊天" left-arrow fixed placeholder>
+			<van-nav-bar :title="title" left-arrow fixed placeholder>
 				<template #right>
-					<van-icon name="search" size="18" />
+					<p @click="$router.push({path:'/groupDetails',query:{type:route.query.type||'group'}})">
+						...
+					</p>
 				</template>
 			</van-nav-bar>
 		</div>
-		<div class="content"></div>
-		<div class="bot"></div>
+		<div class="content">
+			<slot name="content"></slot>
+		</div>
+		<div class="bot">
+			<div class="input-box" contenteditable="true" spellcheck="false" id="inputBox"
+					 placeholder="这一刻的想法..."
+					 ref="divInputBox"
+			></div>
+		</div>
 	</div>
 </template>
 
@@ -39,7 +56,7 @@
 
 .bot {
 	width: 100%;
-	height: 70px;
+	height: 45px;
 	background: red;
 }
 </style>

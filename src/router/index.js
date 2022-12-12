@@ -137,6 +137,11 @@ const routes = [
     path: '/zcNum',
     name: 'zcNum',
     component : () => import(/* webpackChunkName: "about" */ '../views/SelectUdNum.vue')
+  },
+  {
+    path: '/groupDetails',
+    name: 'groupDetails',
+    component : () => import(/* webpackChunkName: "about" */ '../views/GroupDetails.vue')
   }
 ]
 
