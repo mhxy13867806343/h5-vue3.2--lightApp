@@ -3,6 +3,9 @@
 </template>
 
 <style>
+html,body{
+	scroll-behavior: smooth;
+}
 .text-flex{
   display: flex;
   justify-content: flex-end;
