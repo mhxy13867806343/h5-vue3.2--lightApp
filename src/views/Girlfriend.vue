@@ -1,8 +1,10 @@
 <script setup>
+import ChatIm from "@/components/ChatIm.vue";
+import Swipers from "@/components/Swipers.vue";
 import { Toast } from 'vant'
 import {ref,defineProps,onMounted,onUnmounted,nextTick} from "vue";
 import {useRoute} from 'vue-router'
-import ChatIm from "@/components/ChatIm.vue";
+const swiperList = ref([])//工具
 const route=useRoute()
 const props = defineProps({
 	title:{
@@ -94,11 +96,70 @@ const emojiShow=ref(false)
 const emojiTrgger=ref('') // 触发表情的dom
 const inValueToogle=ref('off')
 onMounted(() => {
+	getRouterSwiperList()
 	document.addEventListener('click', closeSelect)
 })
 onUnmounted(() => {
 	document.removeEventListener('click', closeSelect)
 })
+const getRouterSwiperList=(type)=>{
+	swiperList.value=[
+		{
+			num:1,
+			list:[
+				{
+					className:'icon-tupian',
+					title:'相册',
+				},
+				{
+					className:'icon-paishe',
+					title:'拍摄',
+				},
+				{
+					className:'icon-shipintonghua-tianchong',
+					title:'视频通话',
+				},
+				{
+					className:'icon-position',
+					title:'位置',
+				},
+				{
+					className:'icon-tuikuan',
+					title:'红包',
+				},
+				{
+					className:'icon-zhuanzhang',
+					title:'转账',
+				},
+				{
+					className:'icon-saying',
+					title:'语音输入',
+				},
+				{
+					className:'icon-wodeshoucang',
+					title:'我的收藏',
+				},
+			]
+		},
+		{
+			num:1,
+			list:[
+				{
+					className:'icon-mingpian1',
+					title:'名片',
+				},
+				{
+					className:'icon-wenjianjia',
+					title:'文件',
+				},
+				{
+					className:'icon-yinle',
+					title:'音乐',
+				}
+			]
+		}
+	]
+}
 //点击空白处隐藏
 const closeSelect = (e) => {
 	console.log(e.target,codeDom.value.contains(e.target))
@@ -170,7 +231,9 @@ const onClickDivInputBox=(e)=>{
 			</div>
 
 			<transition name="slide-up">
-				<div class="more-last" v-show="emojiShow"></div>
+				<div class="more-last" v-show="emojiShow">
+					<swipers :list="swiperList" />
+				</div>
 			</transition>
 		</div>
 	</div>
@@ -253,7 +316,7 @@ const onClickDivInputBox=(e)=>{
 }
 .more-last{
 	width: 100%;
-	height: 100px;
+	height: 150px;
 	background: #fff;
 }
 .bot-top{
@@ -277,7 +340,7 @@ const onClickDivInputBox=(e)=>{
 	animation: slide-down 0.5s;
 }
 .bot-mores-top0-y{
-	transform: translateY(-100px);
+	transform: translateY(-150px);
 
 
 }
