@@ -203,7 +203,7 @@ const onClickDivInputBox=(e)=>{
 				</template>
 			</van-nav-bar>
 		</div>
-		<div class="content" ref="contentRef"
+		<div class="content" ref="contentRef" @click="emojiShow=false"
 				 :class="[emojiShow?'content-emoji-show1':'content-emoji-show0']">
 			<chat-im :list="contentList"/>
 		</div>
@@ -228,7 +228,7 @@ const onClickDivInputBox=(e)=>{
 			</div>
 
 			<transition name="slide-up">
-				<div class="more-last" v-show="emojiShow">
+				<div class="more-last" v-if="emojiShow">
 					<swipers :list="swiperList" />
 				</div>
 			</transition>
@@ -255,17 +255,17 @@ const onClickDivInputBox=(e)=>{
 	background: #dbdbdb;
 	padding-bottom: 19px;
 }
-
 .bot {
 	width: 100%;
 	flex: 0 0 auto;
+	height: 44px;
+	line-height: 44px;
 }
 .bot{
 	position: fixed;
 	bottom:0;
 	width:100%;
 	left:0;
-	height: 200px;
 }
 .more,.bot-top{
 	display: flex;
@@ -311,7 +311,7 @@ const onClickDivInputBox=(e)=>{
 }
 .more-last{
 	width: 100%;
-	height: 150px;
+	min-height: 200px;
 	background: #fff;
 }
 .bot-top{
@@ -335,12 +335,12 @@ const onClickDivInputBox=(e)=>{
 	animation: slide-down 0.5s;
 }
 .bot-mores-top0-y{
-	transform: translateY(-150px);
+	transform: translateY(-200px);
 
 
 }
 .content-emoji-show1{
-	padding-bottom: 130px;
+	padding-bottom: 180px;
 	transition: all 0.5s;
 }
 .content-emoji-show0{

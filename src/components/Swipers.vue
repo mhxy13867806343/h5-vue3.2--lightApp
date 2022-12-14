@@ -8,7 +8,7 @@ const props =defineProps({
 })
 </script>
 <template>
-	<van-swipe :loop="false">
+	<van-swipe>
 		<van-swipe-item v-for="(item,index) in list" :key="index">
 			<div class="swipe-item-cls" v-for="(item1,index1) in item.list" :key="index1">
 				<p class="iconfont" :class="item1.className"></p>
@@ -35,6 +35,6 @@ p{
 	margin:0;
 }
 /deep/.van-swipe__indicators{
-	bottom: 0;
+	bottom: 25px;
 }
 </style>
