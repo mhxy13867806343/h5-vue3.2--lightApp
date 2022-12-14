@@ -162,8 +162,6 @@ const getRouterSwiperList=(type)=>{
 }
 //点击空白处隐藏
 const closeSelect = (e) => {
-	console.log(e.target,codeDom.value.contains(e.target))
-	console.log(e.target,!codeDom.value.contains(e.target))
 	if (!codeDom.value.contains(e.target)) {
 		emojiShow.value = false
 	}
@@ -184,9 +182,8 @@ const onClickDivInputBoxFocus=()=>{
 			top: +offsetHeight,
 			behavior:'smooth'
 		}
-		console.log(scrollOptions)
 		window.scrollTo(scrollOptions);
-	},230)
+	},500)
 }
 const onClickDivInputBox=(e)=>{
 	const innerHTML=e.target.innerHTML
@@ -196,7 +193,7 @@ const onClickDivInputBox=(e)=>{
 }
 </script>
 <template>
-	<div class="wrapper" ref="codeDom">
+	<div ref="codeDom">
 		<div class="top">
 			<van-nav-bar :title="title" left-arrow fixed placeholder>
 				<template #right>
@@ -242,14 +239,6 @@ const onClickDivInputBox=(e)=>{
 
 
 <style scoped>
-.wrapper {
-	margin: 0;
-	padding: 0;
-	display: flex;
-	flex-direction: column;
-	/* 父元素一定要给高度 */
-	height: 100vh;
-}
 
 .top {
 	width: 100%;
@@ -271,6 +260,7 @@ const onClickDivInputBox=(e)=>{
 	bottom:0;
 	width:100%;
 	left:0;
+	height: 200px;
 }
 .more,.bot-top{
 	display: flex;
