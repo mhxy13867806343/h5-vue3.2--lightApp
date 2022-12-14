@@ -193,7 +193,7 @@ const onClickDivInputBox=(e)=>{
 }
 </script>
 <template>
-	<div ref="codeDom">
+	<div class="wrapall" ref="codeDom">
 		<div class="top">
 			<van-nav-bar :title="title" left-arrow fixed placeholder>
 				<template #right>
@@ -239,21 +239,26 @@ const onClickDivInputBox=(e)=>{
 
 
 <style scoped>
-
+.wrapall{
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
 .top {
 	width: 100%;
+	flex: 0 0 auto;
 }
 
 .content {
 	width: 100%;
-	flex: 1;
+	flex: 1 1 auto;
 	background: #dbdbdb;
 	padding-bottom: 19px;
 }
 
 .bot {
 	width: 100%;
-
+	flex: 0 0 auto;
 }
 .bot{
 	position: fixed;
