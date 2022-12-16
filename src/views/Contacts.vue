@@ -23,11 +23,15 @@ const onActionsSelect=item=>{
 }
 </script>
 <template>
-	<van-nav-bar title="通讯录列表">
+	<van-nav-bar title="通讯录列表"  left-arrow>
 		<template #left>
+			<van-icon name="arrow-left" @click="$router.go(-1)" />
 			<van-popover v-model:show="showPopover" placement="right-start" >
 				<template #reference>
+
+
 					<p>
+
 						...
 					</p>
 				</template>
@@ -61,5 +65,10 @@ const onActionsSelect=item=>{
 p{
 	margin: 0;
 	padding: 0;
+}
+.van-icon-arrow-left{
+	top: 3px;
+	transform: translate(0,0%);
+	display: flex;
 }
 </style>

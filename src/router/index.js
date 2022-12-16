@@ -18,9 +18,9 @@ const routes = [
         component:  () => import(/* webpackChunkName: "about" */ '../views/Hot.vue')
       },
       {
-        path: '/contacts',
-        name: 'contacts',
-        component:  () => import(/* webpackChunkName: "about" */ '../views/Contacts.vue')
+        path: '/found',
+        name: 'found',
+        component:  () => import(/* webpackChunkName: "about" */ '../views/Found.vue')
       },
       {
         path: '/my',
@@ -142,6 +142,16 @@ const routes = [
     path: '/groupDetails',
     name: 'groupDetails',
     component : () => import(/* webpackChunkName: "about" */ '../views/GroupDetails.vue')
+  },
+  {
+    path: '/contacts',
+    name: 'contacts',
+    component : () => import(/* webpackChunkName: "about" */ '../views/Contacts.vue')
+  },
+  {
+    path: '/cloudLabels',
+    name: 'cloudLabels',
+    component : () => import(/* webpackChunkName: "about" */ '../views/CloudLabels.vue')
   }
 ]
 
