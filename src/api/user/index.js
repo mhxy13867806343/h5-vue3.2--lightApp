@@ -166,3 +166,9 @@ export const getUsersCloud = params => {
     params
   })
 }
+//云标签详情
+export const getUsersCloudDetails = name => {
+  return request({
+    url: `users/clode/${name}`,
+  })
+}

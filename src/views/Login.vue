@@ -2,17 +2,10 @@
 import { NoticeBar,Toast } from 'vant';
 import useUser from '@/hooks/useUser'
 const {userRef,btnDisabledCom,onClickUserType}=useUser()
-import {getDictList} from '@/api/dict'
 import {getSoupfapig} from '@/api/histry'
 import {onMounted,ref} from 'vue'
 const soupfapig=ref('')
 onMounted(()=>{
-  const _key='dictList'
-  getDictList({
-    page_size:100
-  }).then(res=>{
-    localStorage.setItem(_key,JSON.stringify(res.data))
-  })
   getSoupfapig().then(res=>{
     if(res.data.error_code===0){
       soupfapig.value=res.data.result.text

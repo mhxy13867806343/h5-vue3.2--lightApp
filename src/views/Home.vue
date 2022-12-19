@@ -5,7 +5,14 @@ import useList from '@/hooks/useList'
 const { paramsRef, onRefresh, ongetList, onClearRead }=useList()
 import {getHomeList}from '@/api/home'
 import {onMounted,ref} from 'vue'
+import {getDictList} from "@/api/dict";
 onMounted(()=>{
+	const _key='dictList'
+	getDictList({
+		page_size:100
+	}).then(res=>{
+		localStorage.setItem(_key,JSON.stringify(res.data))
+	})
   ongetList(getHomeList,{})
 
 })

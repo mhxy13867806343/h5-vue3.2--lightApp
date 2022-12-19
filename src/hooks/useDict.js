@@ -48,17 +48,34 @@ export default ()=>{
       ...popProps
     },
   })
-  const getDictChildList2=(keys,type=1)=>{
-    getDictChildList(keys).then(res=>{
-      joinReplace(res,'subject',2)
-    })
+  const getDictChildListType=()=>{
+    const optionsType=(type=1,keys='')=>{
+      const fuType=type===1?'email':'subject'
+      getDictChildList(keys).then(res=>{
+        joinReplace(res,fuType,2)
+      })
+    }
+    const replaceItem=(keys)=>{
+      return new Promise((resolve,reject)=>{
+        getDictChildList(keys).then(res=>{
+          res.data.map(item=>{
+            item.router=item.key_url
+            item.text=item.key_name
+            item.icon=item.key_args
+          })
+          resolve(res.data)
+        }).catch(e=>{
+            reject(e)
+        })
+      }).catch(err=>{
+        reject(err)
+      })
+    }
 
-  }
-  const getDictChildList1=(keys,type=1)=>{
-    getDictChildList(keys).then(res=>{
-      joinReplace(res,'email')
-    })
-
+    return {
+      optionsType,
+      replaceItem
+    }
   }
   const joinReplace=(res,key='email',type=1)=>{
     editFormPopReactive[key].list=res.data
@@ -80,9 +97,8 @@ export default ()=>{
   }
   return {
     editFormPopReactive,
-    getDictChildList2,
+    getDictChildListType,
     editTextState,
-    getDictChildList1,
     onProjiectActionsSelect
   }
 }

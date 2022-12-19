@@ -6,7 +6,8 @@ import { reactive,ref,onMounted } from 'vue';
 import Vue3Tinymce from '@jsdawn/vue3-tinymce';
 import useDict from '@/hooks/useDict'
 const {
-  editFormPopReactive, editTextState, getDictChildList1,getDictChildList2,onProjiectActionsSelect }=useDict()
+	getDictChildListType,
+  editFormPopReactive, editTextState, onProjiectActionsSelect }=useDict()
 onMounted(()=> {
   Dialog.alert ( {
     title : '提示' ,
@@ -14,8 +15,8 @@ onMounted(()=> {
   } ).then ( () => {
     // on close
   } );
-  getDictChildList1("email")
-  getDictChildList2("subject")
+	getDictChildListType().optionsType(1,'email')
+	getDictChildListType().optionsType(2,'subject')
 })
 const onEmailActionsSelect=(item,index)=>{
   onProjiectActionsSelect(item,index,'email',)

@@ -1,5 +1,7 @@
 <script setup>
 import tagsLables from "@/components/TagsLables.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 import {getUsersCloud} from '@/api/user'
 import {onMounted, ref} from "vue";
 const cloudList = ref([])
@@ -26,6 +28,12 @@ const clickTagItem=item=>{
 
 
 	console.log(item.tag_name_type)
+	router.push({
+		path:'/tag',
+		query:{
+			name:item.name,
+		}
+	})
 }
 </script>
 <template>

@@ -152,6 +152,11 @@ const routes = [
     path: '/cloudLabels',
     name: 'cloudLabels',
     component : () => import(/* webpackChunkName: "about" */ '../views/CloudLabels.vue')
+  },
+  {
+    path: '/tag',
+    name: 'tag',
+    component : () => import(/* webpackChunkName: "about" */ '../views/vTag.vue')
   }
 ]
 
