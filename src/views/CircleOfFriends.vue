@@ -9,12 +9,13 @@ const {onAfterRead}=useUpload()
 import {ref, onMounted, computed, getCurrentInstance} from 'vue'
 import {useRouter} from 'vue-router'
 import { Dialog,Toast } from 'vant';
+import UserList from "@/components/UserList.vue";
 
 const host1=getCurrentInstance ().appContext.config.globalProperties.$host1
 const uploadFile=ref([])//临时使用的上传
 const router=useRouter()
-const contentIf=ref(false)
-const creationTime=ref([])
+
+
 onMounted(()=>{
 	const _suploadPromiseTask=localStorage.getItem('suploadPromiseTask')
 	if(_suploadPromiseTask){
@@ -40,9 +41,7 @@ onMounted(()=>{
 
 		}
 	}
-	setInterval(()=>{
-		contentIfChangeComputed()
-	},1000)
+
 
 })
 onMounted(()=>{
@@ -52,37 +51,11 @@ onMounted(()=>{
 const onLoad=()=>{
 	paramsRef.page++
 	ongetList(getPyclist,{})
-	setInterval(()=>{
-		contentIfChangeComputed()
-	},1000)
+
 
 }
-const c_imagesCom=computed(()=>{
 
-	return  paramsRef.list.map(item=>{
-		if(item.c_images){
-			const split = item.c_images.split(',')
-			if(split?.length){
-				return split.map(item=>{
-					return host1+item
-				})
-			}
-		}
-	})
-})
-const onClickAll=()=>{
-	contentIf.value=!contentIf.value
-}
-const textCapitalize =(value)=>{
-	if(!value){
-		return ''
-	}
-	value=value.toString()
-	if (value.length>50) {
-		return value.substr(0,50)+'...'
-	}
-	return value
-}
+
 function getBase64(file) {
 	return new Promise((resolve, reject) => {
 		///FileReader类就是专门用来读文件的
@@ -116,32 +89,14 @@ const onBeforeRead=file=>{
 			})
 		}
 }
-const contentIfChangeComputed=()=>{
-	return paramsRef.list.forEach(item=>{
-		const {c_create_time}=item
-		let _t=c_create_time*1000
-		const days=moment().diff(moment(_t), 'days')
-		let time=''
-		if(days<=365){
-			time=moment(_t).fromNow()
-		}if(days>365){
-			time=moment(_t).format('YYYY-MM-DD')
-		}
-		creationTime.value.push(time)
-	})
 
-}
 const onRefresh1=()=>{
 	onRefresh(getPyclist,{})
-	setInterval(()=>{
-		contentIfChangeComputed()
-	},1000)
-
 }
 </script>
 <template>
 	<van-nav-bar placeholder fixed  title="朋友圈"
-							 left-text="返回"
+							 left-text="个人中心"
 							 left-arrow
 							 @click-left="$router.replace({path:'/my'})"
 	>
@@ -164,40 +119,7 @@ const onRefresh1=()=>{
 			finished-text="没有更多了"
 			@load="onLoad"
 	>
-		<ul>
-			<li class="li1" v-for="(item,index) in  paramsRef.list" :key="index">
-				<div class="left">
-					<van-image
-							width="50"
-							height="50"
-							:src="`${host1}${item.c_avatar}`"
-					/>
-				</div>
-				<div class="right">
-					<p class="nickname">
-						发布者:
-						<span>{{item.c_name}}</span>
-					</p>
-					<div class="content">
-						<p v-html="contentIf?item.c_content:textCapitalize(item.c_content)"></p>
-						<span  @click="onClickAll" v-if="item.c_content.length>50">{{
-								contentIf?'收起':'全文'}}</span>
-					</div>
-					<ul class="ul1">
-						<li v-for="(item,index) in c_imagesCom&&c_imagesCom[index]" :key="index">
-							<van-image
-									width="100"
-									height="100"
-									:src="item"
-							/>
-						</li>
-					</ul>
-					<p class="time">
-						发布于:{{creationTime[index]}}
-					</p>
-				</div>
-			</li>
-		</ul>
+		<user-list :list="paramsRef.list"></user-list>
 	</van-list>
 
 </template>
@@ -205,64 +127,5 @@ const onRefresh1=()=>{
 <style scoped>
 /deep/.van-nav-bar__content{
 	background: #f7f7fa;
-}
-.v-right{
-display: flex;
-}
-.v-right p{
-	padding: 0 10px;
-}
-ul .li1{
-	display: flex;
-	padding:16px;
-
-}
-.left /deep/.van-image img{
-	border-radius: 6px;
-}
-.right{
-	margin-left: 8px;
-	flex:1;
-}
-.nickname{
-	font-size:12px;
-	font-weight: 700;
-	color: #999;
-	margin-bottom: 3px;
-}
-.nickname span{
-	color: #61affe;
-	font-size: 16px;
-}
-.ul1{
-	display: flex;
-  justify-content: flex-start;
-  align-items: center;
-	flex-wrap: wrap;
-	margin:5px 0;
-}
-.ul1 li{
-	width: 31%;
-}
-p{
-	margin: 0;
-	padding: 0;
-}
-.content{
-	font-size: 15px;
-	color: #666;
-	font-weight: 700;
-	word-break: break-all;
-}
-.content span{
-	font-weight: 400;
-	color: #61affe;
-	display: block;
-	margin: 4px 0;
-}
-.time{
-	font-size: 13px;
-	color: #999;
-	text-align: right;
 }
 </style>

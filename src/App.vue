@@ -27,4 +27,10 @@ html,body{
 .informationRef{
   color: var(--van-field-disabled-text-color) !important;
 }
+.v-right{
+	display: flex;
+}
+.v-right p{
+	padding: 0 10px;
+}
 </style>

@@ -142,8 +142,18 @@ module.exports = {
     https: false,
     hotOnly: false,
     /* 使用代理 */
-    // proxy: {
-    // },
+    proxy: {
+      '/api': {
+        target: "http://localhost:8010/",   // 实际跨域请求的API地址
+        secure: false,   // https请求则使用true
+        ws: true,
+        changeOrigin: true,  // 跨域
+        // 请求地址重写  http://front-end/api/login ⇒ http://api-url/login
+        pathRewrite: {
+          '^/api': '/',
+        }
+      }
+    },
     before: () => {}
   },
   // 第三方插件配置
