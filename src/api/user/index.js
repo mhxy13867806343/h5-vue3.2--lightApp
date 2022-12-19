@@ -151,3 +151,18 @@ export const getHotidList= params => {
     params,
   })
 }
+//验证码生成
+export const postSendCode = params => {
+  return request({
+    url: 'emails/code',
+    params
+  })
+}
+
+//云标签
+export const getUsersCloud = params => {
+  return request({
+    url: 'users/cloud',
+    params
+  })
+}

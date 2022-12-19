@@ -1,15 +1,35 @@
-import {reactive,computed} from 'vue'
-import{postRegister,postLogin}from '@/api/user'
-import {useRouter} from 'vue-router'
+import {reactive,computed,ref,onMounted} from 'vue'
+import{postRegister,postLogin,postSendCode}from '@/api/user'
+import {useRouter,useRoute} from 'vue-router'
 
 import { Toast } from 'vant';
 export default ()=>{
+  const route=useRoute()
   const router= useRouter()
+  const _codeRef=reactive({
+    code:'',
+    image:'',
+  })
   const userRef=reactive({
     user:'',//用户名
     pwd:'',//密码
+    code:'',//验证码
   })
+  onMounted(()=>{
+    onRouteCode()
+  })
+  const onRouteCode=()=>{
+    if(route.path==='/zc'){
+      postSendCode({}).then(res=>{
+        _codeRef.code=res.data.code
+        _codeRef.image=res.data.image
+      })
+    }
+  }
   const btnDisabledCom=computed(()=>{
+    if(route.path==='/zc'){
+      return !userRef.user || !userRef.pwd || !userRef.code
+    }
     return !userRef.user || !userRef.pwd
   })
   const onClickUserType=type=>{
@@ -19,8 +39,17 @@ export default ()=>{
      */
     const username=userRef.user
     const password=userRef.pwd
+    const code=userRef.code
+    if(type===2){
+      if(code!==_codeRef.code){
+        onUpdateClickUserType()
+        userRef.code=''
+        Toast.fail('验证码错误')
+        return
+      }
+    }
     Toast.loading({
-      message: (type===2?'注册...':'登录')+'中',
+      message: `(${type===2?'注册...':'登录'})中`,
       duration: 0,
       forbidClick: true,
       loadingType: 'spinner',
@@ -58,10 +87,24 @@ export default ()=>{
       })
     }
   }
+  //验证码
+  const onUpdateClickUserType=()=>{
+    Toast.loading({
+      message: '验证码更新中...',
+      duration: 0,
+      forbidClick: true,
+      loadingType: 'spinner',
+    });
+    onRouteCode()
+    Toast.clear()
+    Toast.success('验证码更新成功')
+  }
   return {
+    _codeRef,
     userRef,
     btnDisabledCom,
-    onClickUserType
+    onClickUserType,
+    onUpdateClickUserType
   }
 
 }

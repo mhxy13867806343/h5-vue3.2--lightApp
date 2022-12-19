@@ -53,6 +53,26 @@ export default {
 	},
 	methods: {
 		_initTags() {
+			const body_clientWidth=document.body.clientWidth
+			let _clientWidth=0;
+			switch (body_clientWidth>0) {
+				case body_clientWidth>374:
+					_clientWidth=375
+					break;
+				case body_clientWidth>413:
+					_clientWidth=414
+					break;
+				case body_clientWidth>564:
+					_clientWidth=565
+					break;
+				case body_clientWidth>749:
+					_clientWidth=750
+					break;
+				default:
+					_clientWidth=320
+					break;
+			}
+			this.$refs.wrapper.style.width = _clientWidth + 'px'
 			this.rotateAngleX = Math.PI / this.option.rotateAngleXbase
 			this.rotateAngleY = Math.PI / this.option.rotateAngleYbase
 			// 鼠标悬浮改变转速和方向
