@@ -19,21 +19,12 @@ postUserLogut().then(res=>{
 }
 </script>
 <template>
-  <div class="justify-center img-centered">
-    <van-image
-        round
-        width="5rem"
-        height="5rem"
-        :src="$host1+myDetail.avatar"
-    />
-  </div>
-	<van-cell-group inset title=" ">
-		<van-cell center title="智能机器人" is-link to="girlfriend"/>
-	</van-cell-group>
+
+<!--	<van-cell-group inset title=" ">-->
+<!--		<van-cell center title="智能机器人" is-link to="girlfriend"/>-->
+<!--	</van-cell-group>-->
   <van-cell-group inset title=" ">
     <van-cell center title="朋友圈"  to="circleOfFriends" is-link/>
-    <van-cell center title="我的昵称"  :value="myDetail.nickname"/>
-    <van-cell center title="我的记录" is-link  to="minrecording"/>
     <van-cell center title="我的信息" is-link  to="minformation"/>
     <van-cell center title="我的标签" is-link  to="mlabel"/>
     <van-cell center title="我的签到" is-link  to="mcenter"/>
@@ -42,9 +33,6 @@ postUserLogut().then(res=>{
   <van-cell-group inset title=" ">
     <van-cell center title="修改密码" is-link to="mupwd"/>
   </van-cell-group>
-	<van-cell-group inset title=" ">
-		<van-cell center title="设置" is-link to="set"/>
-	</van-cell-group>
   <div class="justify-center img-centered-1">
     <van-button hairline type="primary" block round @click="onClickLont">退出</van-button>
   </div>

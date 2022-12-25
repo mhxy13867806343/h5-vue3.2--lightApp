@@ -16,11 +16,11 @@ const pathreactive=reactive({
 			inactive: 'icon-tongxunlu',
 			name:'通讯录'
 		},
-		{
-			active: 'icon-faxian-copy',
-			inactive: 'icon-faxian',
-			name:'发现'
-		},
+		// {
+		// 	active: 'icon-faxian-copy',
+		// 	inactive: 'icon-faxian',
+		// 	name:'发现'
+		// },
     {
       active: 'icon-wode-copy',
       inactive: 'icon-wode',
@@ -30,7 +30,7 @@ const pathreactive=reactive({
 })
 onMounted(()=>{
   //页面刷新
-  const list =['/home','/hot','/found','/my']
+  const list =['/home','/hot','/my']
   const index=list.findIndex(item=>item===route.path)
   active.value=index ||0
 })
@@ -38,8 +38,7 @@ const onChange=(active)=>{
   const d={
     0:'/home',
 		1:'/hot',
-		2:'/found',
-    3:'/my'
+    2:'/my'
   }
   router.push(d[active])
 }

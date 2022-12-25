@@ -81,12 +81,6 @@ const routes = [
   },
   {
 
-    path: '/myCheckInRecords',
-    name: 'myCheckInRecords',
-    component : () => import(/* webpackChunkName: "about" */ '../views/MyCheckInRecords.vue')
-  },
-  {
-
     path: '/myiMore',
     name: 'myiMore',
     component : () => import(/* webpackChunkName: "about" */ '../views/MyInformatMore.vue')
@@ -105,12 +99,6 @@ const routes = [
   },
   {
 
-    path: '/minrecording',
-    name: 'minrecording',
-    component : () => import(/* webpackChunkName: "about" */ '../views/Recording.vue')
-  },
-  {
-
     path: '/girlfriend',
     name: 'girlfriend',
     component : () => import(/* webpackChunkName: "about" */ '../views/Girlfriend.vue')
@@ -120,18 +108,6 @@ const routes = [
     path: '/addContacts',
     name: 'addContacts',
     component : () => import(/* webpackChunkName: "about" */ '../views/AddContacts.vue')
-  },
-  {
-
-    path: '/logotype',
-    name: 'logotype',
-    component : () => import(/* webpackChunkName: "about" */ '../views/Logotype.vue')
-  },
-  {
-
-    path: '/set',
-    name: 'set',
-    component : () => import(/* webpackChunkName: "about" */ '../views/MySet.vue')
   },
   {
     path: '/zcNum',

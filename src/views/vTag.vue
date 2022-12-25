@@ -1,11 +1,21 @@
 <script setup>
+import vtabRecommend from '@/components/VtabRecommend.vue'
 import {getUsersCloudDetails}from '@/api/user'
 import useDict from '@/hooks/useDict'
 const {getDictChildListType}=useDict()
-import {onMounted,ref,computed} from "vue";
+import {onMounted, ref, computed, reactive} from "vue";
 import {useRoute} from 'vue-router'
 const route = useRoute()
 const details =ref({})
+const tab=reactive({
+	active:0,
+	list:[
+		{title:'新冠药口'},
+		{title:'新冠药口'},
+		{title:'新冠药口'},
+		{title:'新冠药口'},
+	]
+})
 const defaultKey =ref([])
 const optionsList =ref([
 	{
@@ -39,8 +49,17 @@ onMounted( () => {
 		<van-cell title="标签使用者(大于0才可以点击跳新页面)" is-link :value="`${details.tag_name_count||0}次`" center/>
 		<van-cell title="标签唯一id号" is-link :value="`${details.tag_name_id||'null'}`" center/>
 		<van-cell title="标签详情"   :value="`${details.tag_name_desc||'暂无详情'}`" center/>
-		<van-cell title="标签是否阳性"   value="暂无阳性" center/>
 		<van-cell title="标签外部链接"   value="暂无链接" center/>
+	</van-cell-group>
+	<van-cell-group inset title="标签其他">
+		<van-tabs v-model:active="tab.active" sticky swipeable animated>
+			<van-tab title="评价">
+				评价
+			</van-tab>
+			<van-tab title="推荐">
+				<vtab-recommend :item="item" v-for="(item,index) in tab.list" :key="index"/>
+			</van-tab>
+		</van-tabs>
 	</van-cell-group>
 	<van-cell-group inset title="标签操作">
 		<van-cell   center class="van-cell-list">
@@ -51,6 +70,7 @@ onMounted( () => {
 			</template>
 		</van-cell>
 	</van-cell-group>
+
 </template>
 
 
