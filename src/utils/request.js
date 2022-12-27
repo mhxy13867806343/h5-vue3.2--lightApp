@@ -2,7 +2,7 @@ import axios from 'axios'
 import router from '../router'
 import { Toast } from 'vant'
 const service = axios.create({
-  baseURL: '/api', // url = base url + request url
+  baseURL:  process.env.NODE_ENV === 'development' ?'/api':'http://www.lcs90.top/api', // url = base url + request url
   withCredentials: false, // send cookies when cross-domain requests
   timeout: 5000, // request timeout
 })

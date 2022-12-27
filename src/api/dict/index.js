@@ -13,8 +13,9 @@ export const getDictChildList = keys => {
   })
 }
 //相关热搜展示内容
-export const getDictListHot = type => {
+export const getDictListHot = params => {
   return request({
-    url: `dicts/hot?type=${type}`,
+    url: `dicts/hot`,
+    params
   })
 }

@@ -64,6 +64,7 @@ export default ()=>{
     const formData=new FormData()
     formData.append('avatar',informationRef.avatar)
     formData.append('nickname',informationRef.nickname)
+    formData.append('user_num',+myDetail.value.id)
     formData.append('id',+myDetail.value.id)
     const toast = Toast.loading({
       duration: 0,

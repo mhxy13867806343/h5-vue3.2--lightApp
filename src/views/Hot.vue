@@ -2,6 +2,8 @@
 import {useRouter,useRoute} from 'vue-router';
 import {getDictChildList,getDictListHot} from '@/api/dict'
 import {onMounted,ref} from 'vue'
+import useList from '@/hooks/useList'
+const { paramsRef, onRefresh, ongetList, onClearRead }=useList()
 const [router,route]=[useRouter(),useRoute()]
 const active=ref(0)
 const hot=ref([])
@@ -16,9 +18,7 @@ onMounted(()=>{
 	})
 })
 const getDictListHot1=(type)=>{
-	getDictListHot(type).then(res=>{
-		hotList.value=res.data
-	})
+	ongetList(getDictListHot,{type})
 }
 const firstRouter=index=>{
 	hotList.value=[]
@@ -34,18 +34,31 @@ const firstRouter=index=>{
 	})
 }
 const onTabChanged=(index,item)=>{
+	paramsRef.page=1
 	active.value=index
 	firstRouter(index)
 }
 const onClickHot=item=>{
 	window.location.href=item.hot_url
 }
+const onLoad=()=>{
+	paramsRef.page++
+	ongetList(getDictListHot,{type:hot.value[active.value].key_value})
+
+}
 </script>
 <template>
 	<van-tabs v-model:active="active" sticky animated swipeable @change="onTabChanged">
 		<van-tab v-for="(item,index) in hot" :title="item.key_name" :key="item.key_value">
+			<van-list
+					:immediate-check="false"
+					v-model:loading="paramsRef.isLoading"
+					:finished="paramsRef.isFinished"
+					finished-text="没有更多了"
+					@load="onLoad"
+			>
 			<ul>
-				<li v-for="(a,b) in hotList" :key="a.hot_cid" @click="onClickHot(a)">
+				<li v-for="(a,b) in paramsRef.list" :key="a.hot_cid" @click="onClickHot(a)">
 					<div class="content">
 						<div class="left">
 							<p>{{a.hot_name}}</p>
@@ -57,6 +70,7 @@ const onClickHot=item=>{
 					</div>
 				</li>
 			</ul>
+			</van-list>
 		</van-tab>
 	</van-tabs>
 </template>
