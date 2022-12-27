@@ -6,5 +6,5 @@ import Vant from 'vant';
 import 'vant/lib/index.css';
 const app=createApp(App)
 app.use(Vant).use(router).mount('#app')
-const _types=process.env.NODE_ENV === 'development' ?'http://localhost:8010/':'http://www.lcs90.top/api'
+const _types=process.env.NODE_ENV === 'development' ?'http://localhost:8010/':'http://www.lcs90.top/'
 app.config.globalProperties.$host1 = _types;
