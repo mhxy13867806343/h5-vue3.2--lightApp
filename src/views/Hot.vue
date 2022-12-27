@@ -34,7 +34,10 @@ const firstRouter=index=>{
 	})
 }
 const onTabChanged=(index,item)=>{
+	paramsRef.isLoading=false
+	paramsRef.isFinished=false
 	paramsRef.page=1
+	paramsRef.list=[]
 	active.value=index
 	firstRouter(index)
 }
@@ -48,7 +51,7 @@ const onLoad=()=>{
 }
 </script>
 <template>
-	<van-tabs v-model:active="active" sticky animated swipeable @change="onTabChanged">
+	<van-tabs v-model:active="active" sticky animated swipeable @click="onTabChanged">
 		<van-tab v-for="(item,index) in hot" :title="item.key_name" :key="item.key_value">
 			<van-list
 					:immediate-check="false"
